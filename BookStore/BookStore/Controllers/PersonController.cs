@@ -1,11 +1,6 @@
-﻿using BookStore.Models;
-using Microsoft.AspNetCore.Mvc;
-using OnlineBookstore.DL.Interface;
-using System.Xml.Linq;
-using BookStore.BL.Interfaces;
-using BookStore.BL.Services;
+﻿using BookStore.BL.Interfaces;
 using BookStore.Models.Models;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BookStore.Controllers
 {
@@ -15,31 +10,6 @@ namespace BookStore.Controllers
     {
         // user interface
         private static IPersonService _personSerice;
-        public static readonly List<Person> Persons = new List<Person>()
-        {
-            new ()
-            {
-                Id = 1,
-                Name = "gosho",
-                Age = 20,
-                BirthOfDate = DateTime.Now,
-            },
-            new ()
-            {
-                Id = 2,
-                Name = "pesho",
-                Age = 26,
-                BirthOfDate = DateTime.Now,
-            },
-            new ()
-            {
-                Id = 3,
-                Name = "tosho",
-                Age = 60,
-                BirthOfDate = DateTime.Now,
-            }
-        };
-
         public PersonController(IPersonService ips)
         {
             _personSerice = ips;
@@ -48,13 +18,13 @@ namespace BookStore.Controllers
         [HttpGet(nameof(Get))]
         public IEnumerable<Person> Get()
         {
-            return Persons;
+            return _personSerice.GetAllPeople();
         }
 
         [HttpGet(nameof(GetByID))]
-        public IEnumerable<Person> GetByID(int id)
+        public Person GetByID(int id)
         {
-            return Persons.Where(x => x.Id == id);
+            return _personSerice.GetById(id);
         }
 
         [HttpGet(nameof(GetGuid))]
@@ -64,20 +34,19 @@ namespace BookStore.Controllers
         }
 
         [HttpPost(nameof(Add))]
-        public bool Add([FromQuery] Person input)
+        public Person Add([FromQuery] Person input)
         {
-            Persons.Add(input);
-            return true;
+            return _personSerice.AddPerson(input);
         }
         [HttpPut(nameof(Update))]
-        public Person? Update([FromBody] Person user)
+        public Person? Update([FromBody] Person person)
         {
-            return _personSerice.UpdateUser(user);
+            return _personSerice.UpdatePerson(person);
         }
         [HttpDelete(nameof(Delete))]
-        public Person? Delete([FromBody] Person user)
+        public Person? Delete([FromBody] Person person)
         {
-            return _personSerice.UpdateUser(user);
+            return _personSerice.UpdatePerson(person);
         }
 
     }

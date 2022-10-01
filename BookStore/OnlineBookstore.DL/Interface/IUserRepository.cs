@@ -1,4 +1,4 @@
-﻿using BookStore.Models;
+﻿using BookStore.Models.Models;
 
 namespace OnlineBookstore.DL.Interface
 {

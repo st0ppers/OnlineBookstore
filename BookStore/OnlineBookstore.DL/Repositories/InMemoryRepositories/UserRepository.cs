@@ -1,4 +1,4 @@
-﻿using BookStore.Models;
+﻿using BookStore.Models.Models;
 using OnlineBookstore.DL.Interface;
 
 namespace OnlineBookstore.DL.Repositories.InMemoryRepositories

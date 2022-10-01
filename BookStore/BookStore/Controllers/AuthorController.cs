@@ -1,80 +1,52 @@
-﻿using BookStore.Models;
+﻿using BookStore.BL.Interfaces;
 using BookStore.Models.Models;
 using Microsoft.AspNetCore.Mvc;
-using OnlineBookstore.DL.Interface;
 
 namespace BookStore.Controllers
 {
+
+    [ApiController]
+    [Route("[controller]")]
     public class AuthorController : ControllerBase
     {
-        private static IAuthorRepo _authorRepo;
-        public static readonly List<Author> Authors = new List<Author>()
+        private static IAuthorService _authorServices;
+        public AuthorController(IAuthorService authorServices)
         {
-            new ()
-            {
-                Id = 1,
-                Name = "gosho",
-                Age = 22,
-                DateOfBirth = DateTime.Now,
-                Nickname = "Gopeto"
-
-            },
-            new ()
-            {
-                Id = 2,
-                Name = "pesho",
-                Age = 25,
-                DateOfBirth = DateTime.MaxValue,
-                Nickname = "Peshkata"
-            },
-            new ()
-            {
-                Id = 3,
-                Name = "tosho",
-                Age = 42,
-                DateOfBirth = DateTime.MinValue,
-                Nickname = "Topkata"
-            }
-        };
-
-        public AuthorController(IAuthorRepo ur)
-        {
-            _authorRepo = ur;
+            _authorServices = authorServices;
         }
 
         [HttpGet(nameof(Get))]
         public IEnumerable<Author> Get()
         {
-            return Authors;
+            return _authorServices.GetAllAuthors();
         }
 
         [HttpGet(nameof(GetByID))]
-        public IEnumerable<Author> GetByID(int id)
+        public Author GetByID(int id)
         {
-            return Authors.Where(x => x.Id == id);
+            return _authorServices.GetById(id);
         }
 
         [HttpGet(nameof(GetGuid))]
         public Guid GetGuid()
         {
-            return _authorRepo.GetGuidId();
+            return _authorServices.GetGuidId();
         }
 
         [HttpPost(nameof(Add))]
-        public bool Add([FromQuery] Author input)
+        public Author Add([FromQuery] Author input)
         {
-            Authors.Add(input);
-            return true;
+            return _authorServices.AddAuthor(input);
         }
         [HttpPut(nameof(Update))]
         public Author? Update([FromBody] Author author)
         {
-            return _authorRepo.UpdateUser(author);
+            return _authorServices.UpdateAuthor(author);
         }
         [HttpDelete(nameof(Delete))]
-        public Author? Delete([FromBody] Author author)
+        public Author? Delete([FromBody] int authorId)
         {
-            return _authorRepo.UpdateUser(author);
+            return _authorServices.DeleteAuthor(authorId);
         }
     }
 }

@@ -9,31 +9,34 @@ namespace BookStore.BL.Services
     {
         private readonly IPersonRepo _personRepository;
         public Guid Id { get; set; }
-        public List<Person> Persons { get; set; }
-
         public PersonService(IPersonRepo ipr)
         {
             _personRepository = ipr;
+        }
+
+        public IEnumerable<Person> GetAllPeople()
+        {
+            return _personRepository.GetAllPeople();
         }
         public Person GetById(int id)
         {
             return _personRepository.GetById(id);
         }
 
-        public Person AddUser(Person person)
+        public Person AddPerson(Person person)
         {
-            _personRepository.AddUser(person);
+            _personRepository.AddPerson(person);
             return person;
         }
 
-        public Person UpdateUser(Person person)
+        public Person UpdatePerson(Person person)
         {
-            return _personRepository.UpdateUser(person);
+            return _personRepository.UpdatePerson(person);
         }
 
-        public Person DeleteUser(int personId)
+        public Person DeletePerson(int personId)
         {
-            return _personRepository.DeleteUser(personId);
+            return _personRepository.DeletePerson(personId);
         }
 
         public Guid GetGuidId()

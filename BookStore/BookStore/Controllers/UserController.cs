@@ -1,4 +1,4 @@
-﻿using BookStore.Models;
+﻿using BookStore.Models.Models;
 using Microsoft.AspNetCore.Mvc;
 using OnlineBookstore.DL.Interface;
 

@@ -4,12 +4,11 @@ namespace OnlineBookstore.DL.Interface
 {
     public interface IPersonRepo
     {
-        private static List<Person> _persons;
-        public Guid Id { get; set; }
+        public IEnumerable<Person> GetAllPeople();
         public Person GetById(int id);
-        public Person AddUser(Person person);
-        public Person UpdateUser(Person person);
-        public Person DeleteUser(int personId);
+        public Person AddPerson(Person person);
+        public Person UpdatePerson(Person person);
+        public Person DeletePerson(int personId);
         public Guid GetGuidId();
     }
 }

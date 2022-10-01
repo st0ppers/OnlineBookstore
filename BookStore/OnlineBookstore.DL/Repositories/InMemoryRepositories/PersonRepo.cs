@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BookStore.Models.Models;
+﻿using BookStore.Models.Models;
 using OnlineBookstore.DL.Interface;
 
 namespace OnlineBookstore.DL.Repositories.InMemoryRepositories
@@ -33,30 +28,53 @@ namespace OnlineBookstore.DL.Repositories.InMemoryRepositories
                 Age = 31,
             }
         };
+        public PersonRepo( )
+        {
+            Id = Guid.NewGuid();
+        }
 
+        public IEnumerable<Person> GetAllPeople()
+        {
+            return _persons;
+        }
         public Person GetById(int id)
         {
-            throw new NotImplementedException();
+            return _persons.FirstOrDefault(x => x.Id == id);
         }
 
-        public Person AddUser(Person person)
+        public Person AddPerson(Person person)
         {
-            throw new NotImplementedException();
+            if (person == null)
+            {
+                return null;
+            }
+            _persons.Add(person);
+            return person;
         }
 
-        public Person UpdateUser(Person person)
+        public Person UpdatePerson(Person person)
         {
-            throw new NotImplementedException();
+            var existingPerson = _persons.FirstOrDefault(x => x.Id == person.Id);
+            if (existingPerson == null)
+            {
+                return null;
+            }
+
+            _persons.Remove(existingPerson);
+            _persons.Add(person);
+            return person;
         }
 
-        public Person DeleteUser(int personId)
+        public Person DeletePerson(int personId)
         {
-            throw new NotImplementedException();
+            var input = _persons.FirstOrDefault(x => x.Id == personId);
+            _persons.Remove(input);
+            return input;
         }
 
         public Guid GetGuidId()
         {
-            throw new NotImplementedException();
+            return Id;
         }
     }
 }
