@@ -10,7 +10,6 @@ namespace BookStore.BL.Interfaces
         public Person GetById(int id);
         public Person AddPerson(Person person);
         public Person UpdatePerson(Person person);
-        public Person DeletePerson(int authroId);
-        public Guid GetGuidId();
+        public Person DeletePerson(int personId);
     }
 }

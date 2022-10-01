@@ -44,9 +44,9 @@ namespace BookStore.Controllers
             return _personSerice.UpdatePerson(person);
         }
         [HttpDelete(nameof(Delete))]
-        public Person? Delete([FromBody] Person person)
+        public Person? Delete([FromBody] int personId)
         {
-            return _personSerice.UpdatePerson(person);
+            return _personSerice.DeletePerson(personId);
         }
 
     }

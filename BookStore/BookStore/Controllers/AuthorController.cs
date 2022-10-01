@@ -27,12 +27,6 @@ namespace BookStore.Controllers
             return _authorServices.GetById(id);
         }
 
-        [HttpGet(nameof(GetGuid))]
-        public Guid GetGuid()
-        {
-            return _authorServices.GetGuidId();
-        }
-
         [HttpPost(nameof(Add))]
         public Author Add([FromQuery] Author input)
         {

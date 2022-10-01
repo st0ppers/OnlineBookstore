@@ -1,21 +1,16 @@
 ﻿using BookStore.BL.Interfaces;
 using BookStore.Models.Models;
+using OnlineBookstore.DL.Interface;
 
 namespace BookStore.BL.Services
 {
     internal class AuthorServices : IAuthorService
     {
-        public readonly IAuthorService _authorRepo;
-        public AuthorServices(IAuthorService authorRepo)
+        public readonly IAuthorRepo _authorRepo;
+        public AuthorServices(IAuthorRepo authorRepo)
         {
             _authorRepo = authorRepo;
         }
-
-        public Guid GetGuidId()
-        {
-            return _authorRepo.GetGuidId();
-        }
-
         public IEnumerable<Author> GetAllAuthors()
         {
             return _authorRepo.GetAllAuthors();

@@ -39,9 +39,5 @@ namespace BookStore.BL.Services
             return _personRepository.DeletePerson(personId);
         }
 
-        public Guid GetGuidId()
-        {
-            return _personRepository.GetGuidId();
-        }
     }
 }

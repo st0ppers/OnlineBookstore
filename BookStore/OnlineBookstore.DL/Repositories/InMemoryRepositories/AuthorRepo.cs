@@ -5,28 +5,57 @@ namespace OnlineBookstore.DL.Repositories.InMemoryRepositories
 {
     public class AuthorRepo : IAuthorRepo
     {
-        public List<Author> _authors = new List<Author>();
-        public Guid Id { get; set; }
-
-        public AuthorRepo()
+        public List<Author> _authors = new List<Author>()
         {
-            Id = Guid.NewGuid();
-        }
+            new()
+            {
+                Age = 20,
+                DateOfBirth = DateTime.Now,
+                Id = 1,
+                Name = "gosho",
+                Nickname = "Goshetoo"
+            },new()
+            {
+                Age = 26,
+                DateOfBirth = DateTime.Now,
+                Id = 2,
+                Name = "pehso",
+                Nickname = "Pesheto"
+            },new()
+            {
+                Age = 30,
+                DateOfBirth = DateTime.Now,
+                Id = 3,
+                Name = "Tosho",
+                Nickname = "tosheto"
+            },new()
+            {
+                Age = 40,
+                DateOfBirth = DateTime.Now,
+                Id = 4,
+                Name = "ivan",
+                Nickname = "ivancho"
+            }
+        };
         public Author GetById(int id)
         {
             return _authors.FirstOrDefault(x => x.Id == id);
         }
 
-        public Author AddUser(Author author)
+        public IEnumerable<Author> GetAllAuthors()
+        {
+            return _authors;
+        }
+        public Author AddAuthor(Author author)
         {
             _authors.Add(author);
             return author;
         }
 
-        public Author UpdateUser(Author author)
+        public Author UpdateAuthor(Author author)
         {
             var existingAuthor = _authors.FirstOrDefault(x => x.Id == author.Id);
-            if (existingAuthor==null)
+            if (existingAuthor == null)
             {
                 return null;
             }
@@ -36,16 +65,11 @@ namespace OnlineBookstore.DL.Repositories.InMemoryRepositories
             return author;
         }
 
-        public Author DeleteUser(int authroId)
+        public Author DeleteAuthor(int authorId)
         {
-            var input = _authors.FirstOrDefault(x => x.Id == authroId);
+            var input = _authors.FirstOrDefault(x => x.Id == authorId);
             _authors.Remove(input);
             return input;
-        }
-
-        public Guid GetGuidId()
-        {
-            return Id;
         }
     }
 }
