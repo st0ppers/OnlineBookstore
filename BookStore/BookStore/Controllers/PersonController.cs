@@ -27,12 +27,6 @@ namespace BookStore.Controllers
             return _personSerice.GetById(id);
         }
 
-        [HttpGet(nameof(GetGuid))]
-        public Guid GetGuid()
-        {
-            return _personSerice.GetGuidId();
-        }
-
         [HttpPost(nameof(Add))]
         public Person Add([FromQuery] Person input)
         {

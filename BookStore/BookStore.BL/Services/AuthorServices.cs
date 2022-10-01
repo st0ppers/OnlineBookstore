@@ -4,7 +4,7 @@ using OnlineBookstore.DL.Interface;
 
 namespace BookStore.BL.Services
 {
-    internal class AuthorServices : IAuthorService
+    public class AuthorServices : IAuthorService
     {
         public readonly IAuthorRepo _authorRepo;
         public AuthorServices(IAuthorRepo authorRepo)

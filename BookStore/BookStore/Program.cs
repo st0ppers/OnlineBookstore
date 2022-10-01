@@ -2,6 +2,7 @@ using BookStore.BL.Interfaces;
 using OnlineBookstore.DL.Interface;
 using OnlineBookstore.DL.Repositories.InMemoryRepositories;
 using BookStore.BL.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -10,7 +11,7 @@ builder.Services.AddSingleton<IUserRepository, UserRepository>();
 builder.Services.AddSingleton<IUserServices, UserServices>();
 
 builder.Services.AddSingleton<IAuthorRepo, AuthorRepo>();
-builder.Services.AddSingleton<IAuthorService, IAuthorService>();
+builder.Services.AddSingleton<IAuthorService, AuthorServices>();
 
 builder.Services.AddSingleton<IPersonRepo, PersonRepo>();
 builder.Services.AddSingleton<IPersonService, PersonService>();
