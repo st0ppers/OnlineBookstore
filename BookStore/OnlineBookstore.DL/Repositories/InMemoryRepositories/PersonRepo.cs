@@ -5,8 +5,6 @@ namespace OnlineBookstore.DL.Repositories.InMemoryRepositories
 {
     public class PersonRepo : IPersonRepo
     {
-        public Guid Id { get; set; }
-
         private static List<Person?> _persons = new List<Person?>()
         {
             new Person()
@@ -28,10 +26,7 @@ namespace OnlineBookstore.DL.Repositories.InMemoryRepositories
                 Age = 31,
             }
         };
-        public PersonRepo( )
-        {
-            Id = Guid.NewGuid();
-        }
+
 
         public IEnumerable<Person> GetAllPeople()
         {
@@ -70,11 +65,6 @@ namespace OnlineBookstore.DL.Repositories.InMemoryRepositories
             var input = _persons.FirstOrDefault(x => x.Id == personId);
             _persons.Remove(input);
             return input;
-        }
-
-        public Guid GetGuidId()
-        {
-            return Id;
         }
     }
 }

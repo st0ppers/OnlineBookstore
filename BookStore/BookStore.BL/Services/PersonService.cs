@@ -8,7 +8,6 @@ namespace BookStore.BL.Services
     public class PersonService : IPersonService
     {
         private readonly IPersonRepo _personRepository;
-        public Guid Id { get; set; }
         public PersonService(IPersonRepo ipr)
         {
             _personRepository = ipr;
@@ -25,8 +24,7 @@ namespace BookStore.BL.Services
 
         public Person AddPerson(Person person)
         {
-            _personRepository.AddPerson(person);
-            return person;
+            return _personRepository.AddPerson(person);
         }
 
         public Person UpdatePerson(Person person)
