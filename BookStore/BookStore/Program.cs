@@ -1,6 +1,23 @@
+using BookStore.BL.Interfaces;
+using OnlineBookstore.DL.Interface;
+using OnlineBookstore.DL.Repositories.InMemoryRepositories;
+using BookStore.BL.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+// addSingleton make instance of the object one time and it used everywhere
+builder.Services.AddSingleton<IUserRepository, UserRepository>();
+builder.Services.AddSingleton<IUserServices, UserServices>();
+
+builder.Services.AddSingleton<IAuthorRepo, AuthorRepo>();
+builder.Services.AddSingleton<IAuthorService, AuthorServices>();
+
+builder.Services.AddSingleton<IPersonRepo, PersonRepo>();
+builder.Services.AddSingleton<IPersonService, PersonService>();
+
+builder.Services.AddSingleton<IBookRepo,BookRepo>();
+builder.Services.AddSingleton<IBookService, BookService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
