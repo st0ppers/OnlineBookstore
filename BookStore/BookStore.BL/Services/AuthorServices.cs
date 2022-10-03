@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Collections;
+using System.Net;
 using AutoMapper;
 using BookStore.BL.Interfaces;
 using BookStore.Models.Models;
@@ -86,6 +87,11 @@ namespace BookStore.BL.Services
         public Author DeleteAuthor(int authorId)
         {
             return _authorRepo.DeleteAuthor(authorId);
+        }
+
+        public bool AddMultipleAuthors(IEnumerable<Author> authorCollection)
+        {
+            return _authorRepo.AddMultipleAuthors(authorCollection);
         }
     }
 }
