@@ -51,10 +51,15 @@ namespace OnlineBookstore.DL.Repositories.InMemoryRepositories
             return book;
         }
 
+        public Book GetByTitle(string title)
+        {
+            return _books.FirstOrDefault(x => x.Title == title);
+        }
+
         public Book UpdateBook(Book book)
         {
             var existingBook = _books.FirstOrDefault(x => x.Id == book.Id);
-            if (existingBook==null)
+            if (existingBook == null)
             {
                 return null;
             }

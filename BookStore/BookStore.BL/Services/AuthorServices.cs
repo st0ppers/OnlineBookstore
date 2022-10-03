@@ -1,34 +1,86 @@
-﻿using BookStore.BL.Interfaces;
+﻿using System.Net;
+using AutoMapper;
+using BookStore.BL.Interfaces;
 using BookStore.Models.Models;
+using BookStore.Models.Requests;
+using BookStore.Models.Responses;
+using Microsoft.Extensions.Logging;
 using OnlineBookstore.DL.Interface;
 
 namespace BookStore.BL.Services
 {
     public class AuthorServices : IAuthorService
     {
+        private readonly IMapper _mapper;
         public readonly IAuthorRepo _authorRepo;
-        public AuthorServices(IAuthorRepo authorRepo)
+        private readonly ILogger<AuthorServices> _logger;
+        public AuthorServices(IAuthorRepo authorRepo, IMapper mapper, ILogger<AuthorServices> logger)
         {
             _authorRepo = authorRepo;
+            _mapper = mapper;
+            _logger = logger;
         }
-        public IEnumerable<Author> GetAllAuthors()
+        public IEnumerable<Author?> GetAllAuthors()
         {
-            return _authorRepo.GetAllAuthors();
+            try
+            {
+                return _authorRepo.GetAllAuthors();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"{e.Message}");
+                throw;
+            }
         }
 
-        public Author GetById(int id)
+        public Author? GetById(int id)
         {
             return _authorRepo.GetById(id);
         }
 
-        public Author AddAuthor(Author author)
+        public Author? GetAuthorByName(string name)
         {
-            return _authorRepo.AddAuthor(author);
+            return _authorRepo.GetAuthorByName(name);
         }
 
-        public Author UpdateAuthor(Author author)
+        public AddAuthorResponse? AddAuthor(AddAuthorRequest? authorRequest)
         {
-            return _authorRepo.UpdateAuthor(author);
+            if (_authorRepo.GetAuthorByName(authorRequest.Name) != null)
+            {
+                return new AddAuthorResponse()
+                {
+                    HttpStatusCode = HttpStatusCode.BadRequest,
+                    Message = "Bad request"
+                };
+            }
+
+            var author = _mapper.Map<Author>(authorRequest);
+            var result = _authorRepo.AddAuthor(author);
+            return new AddAuthorResponse()
+            {
+                HttpStatusCode = HttpStatusCode.OK,
+                Auhtor = result
+            };
+        }
+
+        public AddAuthorResponse? UpdateAuthor(AddAuthorRequest? authorRequest)
+        {
+            if (_authorRepo.GetAuthorByName(authorRequest.Name) != null)
+            {
+                return new AddAuthorResponse()
+                {
+                    HttpStatusCode = HttpStatusCode.BadRequest,
+                    Message = "Bad request"
+                };
+            }
+
+            var author = _mapper.Map<Author>(authorRequest);
+            var result = _authorRepo.UpdateAuthor(author);
+            return new AddAuthorResponse()
+            {
+                HttpStatusCode = HttpStatusCode.OK,
+                Auhtor = result
+            };
         }
 
         public Author DeleteAuthor(int authorId)

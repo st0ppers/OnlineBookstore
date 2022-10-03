@@ -1,4 +1,6 @@
 ﻿using BookStore.Models.Models;
+using BookStore.Models.Requests;
+using BookStore.Models.Responses;
 
 namespace BookStore.BL.Interfaces
 {
@@ -6,8 +8,9 @@ namespace BookStore.BL.Interfaces
     {
         public IEnumerable<Book> GetAllBooks();
         public Book GetById(int id);
-        public Book AddBook(Book book);
-        public Book UpdateBook(Book book);
+        public Book  GetByTitle(string title);
+        public AddBookResponse? AddBook(AddBookRequest bookRequest);
+        public AddBookResponse UpdateBook(AddBookRequest bookRequest);
         public Book DeleteBook(int bookId);
     }
 }
