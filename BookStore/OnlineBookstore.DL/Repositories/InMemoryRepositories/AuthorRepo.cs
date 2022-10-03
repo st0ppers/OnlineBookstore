@@ -1,10 +1,12 @@
 ﻿using BookStore.Models.Models;
+using Microsoft.Extensions.Logging;
 using OnlineBookstore.DL.Interface;
 
 namespace OnlineBookstore.DL.Repositories.InMemoryRepositories
 {
     public class AuthorRepo : IAuthorRepo
     {
+        private readonly ILogger<AuthorRepo> _logger;
         public List<Author?> _authors = new List<Author?>()
         {
             new()
@@ -37,6 +39,12 @@ namespace OnlineBookstore.DL.Repositories.InMemoryRepositories
                 Nickname = "ivancho"
             }
         };
+
+        public AuthorRepo(ILogger<AuthorRepo> logger)
+        {
+            _logger = logger;
+        }
+
         public Author? GetById(int id)
         {
             return _authors.FirstOrDefault(x => x.Id == id);
@@ -72,9 +80,23 @@ namespace OnlineBookstore.DL.Repositories.InMemoryRepositories
             return input;
         }
 
+        public bool AddMultipleAuthors(IEnumerable<Author> authorCollection)
+        {
+            try
+            {
+                _authors.AddRange(authorCollection);
+                return true;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Unable to add multiple authors with message: {e.Message}");
+                throw;
+            }
+        }
+
         public Author? GetAuthorByName(string name)
         {
-           return  _authors.FirstOrDefault(x => name == x.Name);
+            return _authors.FirstOrDefault(x => name == x.Name);
         }
     }
 }

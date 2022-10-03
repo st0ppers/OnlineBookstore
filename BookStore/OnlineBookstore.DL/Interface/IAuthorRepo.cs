@@ -11,5 +11,6 @@ namespace OnlineBookstore.DL.Interface
         public Author? AddAuthor(Author? author);
         public Author? UpdateAuthor(Author? author);
         public Author DeleteAuthor(int authorId);
+        public bool AddMultipleAuthors(IEnumerable<Author> authorCollection);
     }
 }

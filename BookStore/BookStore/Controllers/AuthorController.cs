@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Net.NetworkInformation;
+using AutoMapper;
 using BookStore.BL.Interfaces;
 using BookStore.Models.Models;
 using BookStore.Models.Requests;
@@ -13,11 +14,11 @@ namespace BookStore.Controllers
     public class AuthorController : ControllerBase
     {
         private static IAuthorService _authorServices;
-
-        public AuthorController(IAuthorService authorServices)
+        private readonly IMapper _mapper;
+        public AuthorController(IAuthorService authorServices, IMapper mapper)
         {
             _authorServices = authorServices;
-
+            _mapper = mapper;
         }
 
         [HttpGet(nameof(Get))]
@@ -45,6 +46,23 @@ namespace BookStore.Controllers
             return Ok(_authorServices.GetAuthorByName(name));
         }
 
+        [HttpPost(nameof(AddAuthorRange))]
+        public IActionResult AddAuthorRange([FromBody] AddMultipleAuthorsRequest addMultipleAuthorsRequest)
+        {
+            if (addMultipleAuthorsRequest != null && !addMultipleAuthorsRequest.Authors.Any())
+            {
+                return BadRequest(addMultipleAuthorsRequest);
+            }
+
+            var authorCollection = _mapper.Map<IEnumerable<Author>>(addMultipleAuthorsRequest.Authors);
+
+            var result = _authorServices.AddMultipleAuthors(authorCollection);
+
+            if (!result) return BadRequest(result);
+
+            return Ok(result);
+        }
+
         [HttpPost(nameof(Add))]
         public IActionResult Add([FromBody] AddAuthorRequest authorRequest)
         {
@@ -57,7 +75,6 @@ namespace BookStore.Controllers
             //if (authorExist != null) return BadRequest("Author exists!");
 
             //return Ok(_authorServices.AddAuthor(new Author()));
-
 
 
             //change AddAuthor in services / repo param to AddAuthorRequest
