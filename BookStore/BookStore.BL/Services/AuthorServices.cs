@@ -24,7 +24,6 @@ namespace BookStore.BL.Services
         {
             try
             {
-                throw new Exception();
                 return _authorRepo.GetAllAuthors();
             }
             catch (Exception e)
