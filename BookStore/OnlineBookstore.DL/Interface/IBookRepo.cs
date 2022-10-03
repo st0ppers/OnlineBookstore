@@ -7,6 +7,7 @@ namespace OnlineBookstore.DL.Interface
         public static List<Book> _books { get; set; }
         public IEnumerable<Book> GetAllBooks();
         public Book GetById(int id);
+        public Book GetByTitle(string tilte);
         public Book AddBook(Book book);
         public Book UpdateBook(Book book);
         public Book DeleteBook(int bookId);

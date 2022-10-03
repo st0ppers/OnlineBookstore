@@ -1,6 +1,8 @@
 ﻿using BookStore.BL.Interfaces;
 using BookStore.Models.Models;
+using BookStore.Models.Requests;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace BookStore.Controllers
 {
@@ -21,21 +23,39 @@ namespace BookStore.Controllers
             return _personSerice.GetAllPeople();
         }
 
-        [HttpGet(nameof(GetByID))]
-        public Person GetByID(int id)
+        [HttpGet(nameof(GetById))]
+        public Person GetById(int id)
         {
             return _personSerice.GetById(id);
         }
 
         [HttpPost(nameof(Add))]
-        public Person Add([FromQuery] Person input)
+        public IActionResult Add([FromBody] AddPersonRequest personRequest)
         {
-            return _personSerice.AddPerson(input);
+            var result = _personSerice.GetByName(personRequest.Name);
+
+            if (result.Name == null)
+            {
+                return NotFound();
+            }
+
+            _personSerice.AddPerson(personRequest);
+            return Ok(result);
+
         }
         [HttpPut(nameof(Update))]
-        public Person? Update([FromBody] Person person)
+        public IActionResult? Update([FromBody] AddPersonRequest personRequest)
         {
-            return _personSerice.UpdatePerson(person);
+            var result = _personSerice.GetByName(personRequest.Name);
+
+            if (result.Name == null)
+            {
+                return null;
+            }
+
+            _personSerice.UpdatePerson(personRequest);
+            return Ok(result);
+
         }
         [HttpDelete(nameof(Delete))]
         public Person? Delete([FromBody] int personId)

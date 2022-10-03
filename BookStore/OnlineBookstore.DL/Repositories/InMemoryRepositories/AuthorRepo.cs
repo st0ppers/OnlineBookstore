@@ -5,7 +5,7 @@ namespace OnlineBookstore.DL.Repositories.InMemoryRepositories
 {
     public class AuthorRepo : IAuthorRepo
     {
-        public List<Author> _authors = new List<Author>()
+        public List<Author?> _authors = new List<Author?>()
         {
             new()
             {
@@ -37,22 +37,22 @@ namespace OnlineBookstore.DL.Repositories.InMemoryRepositories
                 Nickname = "ivancho"
             }
         };
-        public Author GetById(int id)
+        public Author? GetById(int id)
         {
             return _authors.FirstOrDefault(x => x.Id == id);
         }
 
-        public IEnumerable<Author> GetAllAuthors()
+        public IEnumerable<Author?> GetAllAuthors()
         {
             return _authors;
         }
-        public Author AddAuthor(Author author)
+        public Author? AddAuthor(Author? author)
         {
             _authors.Add(author);
             return author;
         }
 
-        public Author UpdateAuthor(Author author)
+        public Author? UpdateAuthor(Author? author)
         {
             var existingAuthor = _authors.FirstOrDefault(x => x.Id == author.Id);
             if (existingAuthor == null)
@@ -70,6 +70,11 @@ namespace OnlineBookstore.DL.Repositories.InMemoryRepositories
             var input = _authors.FirstOrDefault(x => x.Id == authorId);
             _authors.Remove(input);
             return input;
+        }
+
+        public Author? GetAuthorByName(string name)
+        {
+           return  _authors.FirstOrDefault(x => name == x.Name);
         }
     }
 }

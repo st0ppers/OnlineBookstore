@@ -27,7 +27,6 @@ namespace OnlineBookstore.DL.Repositories.InMemoryRepositories
             }
         };
 
-
         public IEnumerable<Person> GetAllPeople()
         {
             return _persons;
@@ -47,6 +46,10 @@ namespace OnlineBookstore.DL.Repositories.InMemoryRepositories
             return person;
         }
 
+        public Person GetByName(string name)
+        {
+            return _persons.FirstOrDefault(x => x.Name == name);
+        }
         public Person UpdatePerson(Person person)
         {
             var existingPerson = _persons.FirstOrDefault(x => x.Id == person.Id);

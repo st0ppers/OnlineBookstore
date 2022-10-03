@@ -1,5 +1,8 @@
-﻿using BookStore.BL.Interfaces;
+﻿using System.Net;
+using System.Net.NetworkInformation;
+using BookStore.BL.Interfaces;
 using BookStore.Models.Models;
+using BookStore.Models.Requests;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookStore.Controllers
@@ -10,37 +13,81 @@ namespace BookStore.Controllers
     public class AuthorController : ControllerBase
     {
         private static IAuthorService _authorServices;
+
         public AuthorController(IAuthorService authorServices)
         {
             _authorServices = authorServices;
+
         }
 
         [HttpGet(nameof(Get))]
-        public IEnumerable<Author> Get()
+        public IActionResult Get()
         {
-            return _authorServices.GetAllAuthors();
+            return Ok(_authorServices.GetAllAuthors());
         }
 
         [HttpGet(nameof(GetByID))]
-        public Author GetByID(int id)
+        public IActionResult? GetByID(int id)
         {
-            return _authorServices.GetById(id);
+            if (id <= 0) return BadRequest($"Parameter id {id} must be greater than 0");
+            var result = _authorServices.GetById(id);
+
+            if (result == null)
+            {
+                return NotFound(id);
+            }
+            return Ok(result);
+        }
+
+        [HttpGet(nameof(GetByNameAuthor))]
+        public IActionResult? GetByNameAuthor(string name)
+        {
+            return Ok(_authorServices.GetAuthorByName(name));
         }
 
         [HttpPost(nameof(Add))]
-        public Author Add([FromQuery] Author input)
+        public IActionResult Add([FromBody] AddAuthorRequest authorRequest)
         {
-            return _authorServices.AddAuthor(input);
+            //if (authorRequest == null)
+            //{
+            //    return BadRequest(authorRequest);
+            //}
+
+            //var authorExist = _authorServices.GetAuthorByName(authorRequest.Name);
+            //if (authorExist != null) return BadRequest("Author exists!");
+
+            //return Ok(_authorServices.AddAuthor(new Author()));
+
+
+
+            //change AddAuthor in services / repo param to AddAuthorRequest
+
+            var res = _authorServices.AddAuthor(authorRequest);
+
+            if (res.HttpStatusCode == HttpStatusCode.BadRequest)
+            {
+                return BadRequest(res);
+            }
+
+            return Ok(res);
         }
         [HttpPut(nameof(Update))]
-        public Author? Update([FromBody] Author author)
+        public IActionResult? Update([FromBody] AddAuthorRequest? authorRequest)
         {
-            return _authorServices.UpdateAuthor(author);
+            var existing = _authorServices.GetAuthorByName(authorRequest.Name);
+
+            if (existing.Name == null)
+            {
+                return NotFound(existing);
+            }
+
+            _authorServices.UpdateAuthor(authorRequest);
+            return Ok(existing);
         }
         [HttpDelete(nameof(Delete))]
-        public Author? Delete([FromBody] int authorId)
+        public IActionResult? Delete([FromBody] int authorId)
         {
-            return _authorServices.DeleteAuthor(authorId);
+            return Ok(_authorServices.DeleteAuthor(authorId));
         }
     }
 }
