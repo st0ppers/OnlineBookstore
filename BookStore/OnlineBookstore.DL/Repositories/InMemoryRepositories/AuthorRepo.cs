@@ -4,7 +4,7 @@ using OnlineBookstore.DL.Interface;
 
 namespace OnlineBookstore.DL.Repositories.InMemoryRepositories
 {
-    public class AuthorRepo : IAuthorRepo
+    public class AuthorRepo //: IAuthorRepo
     {
         private readonly ILogger<AuthorRepo> _logger;
         public List<Author?> _authors = new List<Author?>()

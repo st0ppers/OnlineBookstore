@@ -6,12 +6,12 @@ namespace BookStore.BL.Interfaces
 {
     public interface IAuthorService
     {
-        public IEnumerable<Author?> GetAllAuthors();
-        public Author? GetById(int id);
-        public Author? GetAuthorByName(string name);
-        public AddAuthorResponse? AddAuthor(AddAuthorRequest? authorRequest);
-        public AddAuthorResponse? UpdateAuthor(AddAuthorRequest? authorRequest);
-        public Author DeleteAuthor(int authorId);
-        bool AddMultipleAuthors(IEnumerable<Author> authorCollection);
+        public Task<IEnumerable<Author?>> GetAllAuthors();
+        public Task<Author?> GetById(int id);
+        public Task<Author?> GetAuthorByName(string name);
+        public Task<AddAuthorResponse?> AddAuthor(AddAuthorRequest? authorRequest);
+        public Task<AddAuthorResponse?> UpdateAuthor(AddAuthorRequest? authorRequest);
+        public Task<Author> DeleteAuthor(int authorId);
+        public Task<bool> AddMultipleAuthors(IEnumerable<Author> authorCollection);
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using System.Net.NetworkInformation;
 using AutoMapper;
 using BookStore.BL.Interfaces;
 using BookStore.Models.Models;
@@ -22,22 +21,15 @@ namespace BookStore.Controllers
         }
 
         [HttpGet(nameof(Get))]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
-            return Ok(_authorServices.GetAllAuthors());
+            return Ok(await _authorServices.GetAllAuthors());
         }
 
         [HttpGet(nameof(GetByID))]
-        public IActionResult? GetByID(int id)
+        public async Task<IActionResult?> GetByID(int id)
         {
-            if (id <= 0) return BadRequest($"Parameter id {id} must be greater than 0");
-            var result = _authorServices.GetById(id);
-
-            if (result == null)
-            {
-                return NotFound(id);
-            }
-            return Ok(result);
+            return Ok(await _authorServices.GetById(id));
         }
 
         [HttpGet(nameof(GetByNameAuthor))]
@@ -47,7 +39,7 @@ namespace BookStore.Controllers
         }
 
         [HttpPost(nameof(AddAuthorRange))]
-        public IActionResult AddAuthorRange([FromBody] AddMultipleAuthorsRequest addMultipleAuthorsRequest)
+        public async Task<IActionResult> AddAuthorRange([FromBody] AddMultipleAuthorsRequest addMultipleAuthorsRequest)
         {
             if (addMultipleAuthorsRequest != null && !addMultipleAuthorsRequest.Authors.Any())
             {
@@ -56,7 +48,7 @@ namespace BookStore.Controllers
 
             var authorCollection = _mapper.Map<IEnumerable<Author>>(addMultipleAuthorsRequest.Authors);
 
-            var result = _authorServices.AddMultipleAuthors(authorCollection);
+            var result = await _authorServices.AddMultipleAuthors(authorCollection);
 
             if (!result) return BadRequest(result);
 
@@ -64,7 +56,7 @@ namespace BookStore.Controllers
         }
 
         [HttpPost(nameof(Add))]
-        public IActionResult Add([FromBody] AddAuthorRequest authorRequest)
+        public async Task<IActionResult> Add([FromBody] AddAuthorRequest authorRequest)
         {
             //if (authorRequest == null)
             //{
@@ -79,7 +71,7 @@ namespace BookStore.Controllers
 
             //change AddAuthor in services / repo param to AddAuthorRequest
 
-            var res = _authorServices.AddAuthor(authorRequest);
+            var res = await _authorServices.AddAuthor(authorRequest);
 
             if (res.HttpStatusCode == HttpStatusCode.BadRequest)
             {
@@ -89,22 +81,21 @@ namespace BookStore.Controllers
             return Ok(res);
         }
         [HttpPut(nameof(Update))]
-        public IActionResult? Update([FromBody] AddAuthorRequest? authorRequest)
+        public async Task<IActionResult?> Update([FromBody] AddAuthorRequest? authorRequest)
         {
-            var existing = _authorServices.GetAuthorByName(authorRequest.Name);
+            var existing = await _authorServices.GetById(authorRequest.Id);
 
             if (existing.Name == null)
             {
                 return NotFound(existing);
             }
-
-            _authorServices.UpdateAuthor(authorRequest);
+            await _authorServices.UpdateAuthor(authorRequest);
             return Ok(existing);
         }
         [HttpDelete(nameof(Delete))]
-        public IActionResult? Delete([FromBody] int authorId)
+        public async Task<IActionResult?> Delete([FromBody] int authorId)
         {
-            return Ok(_authorServices.DeleteAuthor(authorId));
+            return Ok(await _authorServices.DeleteAuthor(authorId));
         }
     }
 }

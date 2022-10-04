@@ -21,32 +21,24 @@ namespace BookStore.BL.Services
             _mapper = mapper;
             _logger = logger;
         }
-        public IEnumerable<Author?> GetAllAuthors()
+        public async Task<IEnumerable<Author?>> GetAllAuthors()
         {
-            try
-            {
-                return _authorRepo.GetAllAuthors();
-            }
-            catch (Exception e)
-            {
-                _logger.LogError($"{e.Message}");
-                throw;
-            }
+            return await _authorRepo.GetAllAuthors();
         }
 
-        public Author? GetById(int id)
+        public async Task<Author?> GetById(int id)
         {
-            return _authorRepo.GetById(id);
+            return await _authorRepo.GetById(id);
         }
 
-        public Author? GetAuthorByName(string name)
+        public async Task<Author?> GetAuthorByName(string name)
         {
-            return _authorRepo.GetAuthorByName(name);
+            return await _authorRepo.GetAuthorByName(name); 
         }
 
-        public AddAuthorResponse? AddAuthor(AddAuthorRequest? authorRequest)
+        public async Task<AddAuthorResponse?> AddAuthor(AddAuthorRequest? authorRequest)
         {
-            if (_authorRepo.GetAuthorByName(authorRequest.Name) != null)
+            if (await _authorRepo.GetAuthorByName(authorRequest.Name) != null)
             {
                 return new AddAuthorResponse()
                 {
@@ -56,7 +48,7 @@ namespace BookStore.BL.Services
             }
 
             var author = _mapper.Map<Author>(authorRequest);
-            var result = _authorRepo.AddAuthor(author);
+            var result = await _authorRepo.AddAuthor(author);
             return new AddAuthorResponse()
             {
                 HttpStatusCode = HttpStatusCode.OK,
@@ -64,9 +56,9 @@ namespace BookStore.BL.Services
             };
         }
 
-        public AddAuthorResponse? UpdateAuthor(AddAuthorRequest? authorRequest)
+        public async Task<AddAuthorResponse?> UpdateAuthor(AddAuthorRequest? authorRequest)
         {
-            if (_authorRepo.GetAuthorByName(authorRequest.Name) != null)
+            if (await _authorRepo.GetAuthorByName(authorRequest.Name) != null)
             {
                 return new AddAuthorResponse()
                 {
@@ -76,7 +68,7 @@ namespace BookStore.BL.Services
             }
 
             var author = _mapper.Map<Author>(authorRequest);
-            var result = _authorRepo.UpdateAuthor(author);
+            var result = await _authorRepo.UpdateAuthor(author);
             return new AddAuthorResponse()
             {
                 HttpStatusCode = HttpStatusCode.OK,
@@ -84,14 +76,14 @@ namespace BookStore.BL.Services
             };
         }
 
-        public Author DeleteAuthor(int authorId)
+        public async Task<Author?> DeleteAuthor(int authorId)
         {
-            return _authorRepo.DeleteAuthor(authorId);
+            return await _authorRepo.DeleteAuthor(authorId);
         }
 
-        public bool AddMultipleAuthors(IEnumerable<Author> authorCollection)
+        public async Task<bool> AddMultipleAuthors(IEnumerable<Author> authorCollection)
         {
-            return _authorRepo.AddMultipleAuthors(authorCollection);
+            return await _authorRepo.AddMultipleAuthors(authorCollection);
         }
     }
 }
