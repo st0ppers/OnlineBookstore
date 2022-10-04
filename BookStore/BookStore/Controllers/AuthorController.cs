@@ -68,7 +68,6 @@ namespace BookStore.Controllers
 
             //return Ok(_authorServices.AddAuthor(new Author()));
 
-
             //change AddAuthor in services / repo param to AddAuthorRequest
 
             var res = await _authorServices.AddAuthor(authorRequest);

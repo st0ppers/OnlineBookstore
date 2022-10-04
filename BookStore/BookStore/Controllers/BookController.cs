@@ -51,20 +51,18 @@ namespace BookStore.Controllers
             {
                 return BadRequest(result.Message);
             }
-
             return Ok(result);
         }
 
         [HttpPut(nameof(UpdateBook))]
         public async Task<IActionResult> UpdateBook([FromBody] AddBookRequest bookRequest)
         {
-            var result = await _bookService.GetByTitle(bookRequest.Title);
+            var result = await _bookService.GetById(bookRequest.Id);
 
             if (result.Title == null)
             {
                 return NotFound(result);
             }
-
             await _bookService.UpdateBook(bookRequest);
             return Ok(result);
         }

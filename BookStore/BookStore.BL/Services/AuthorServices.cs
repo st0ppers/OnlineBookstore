@@ -66,7 +66,6 @@ namespace BookStore.BL.Services
                     Message = "Bad request"
                 };
             }
-
             var author = _mapper.Map<Author>(authorRequest);
             var result = await _authorRepo.UpdateAuthor(author);
             return new AddAuthorResponse()

@@ -97,11 +97,11 @@ namespace OnlineBookstore.DL.Repositories.MsSQL
                 {
                     await conn.OpenAsync();
 
-                    var resut = conn.QuerySingle(
-                        "UPDATE Books Set Name=@Name,AuthorId=@AuthorId,Title=@Title,LastUpdated=@LastUpdated Quantity=@Quantity Price=@Price WHERE Id=@Id"
-                        , new { Id = book.Id });
+                    var resut =await conn.QueryAsync(
+                        "UPDATE Books SET AuthorId=@AuthorId,Title=@Title,LastUpdated=@LastUpdated,Quantity=@Quantity,Price=@Price WHERE Id=@Id"
+                        , book);
 
-                    return await resut.SingleOrDefault();
+                    return resut.SingleOrDefault();
                 }
             }
             catch (Exception e)

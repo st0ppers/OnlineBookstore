@@ -53,7 +53,7 @@ namespace BookStore.BL.Services
 
         public async Task<AddBookResponse> UpdateBook(AddBookRequest bookRequest)
         {
-            if (_bookRepo.GetByTitle(bookRequest.Title) != null)
+            if (await _bookRepo.GetByTitle(bookRequest.Title) == null)
             {
                 return new AddBookResponse()
                 {
