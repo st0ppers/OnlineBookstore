@@ -68,7 +68,7 @@ namespace OnlineBookstore.DL.Repositories.MsSQL
             catch (Exception e)
             {
                 _logger.LogError($"Error from{nameof(GetById)} with error message: {e.Message}");
-                throw;
+                return false;
             }
         }
         public async Task<Book> GetByTitle(string tilte)
