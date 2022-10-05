@@ -1,5 +1,4 @@
 ﻿using System.Data.SqlClient;
-using AutoMapper;
 using BookStore.Models.Models;
 using Dapper;
 using Microsoft.Extensions.Configuration;
@@ -12,10 +11,12 @@ namespace OnlineBookstore.DL.Repositories.MsSQL
     {
         private readonly ILogger<AuthorSqlRepository> _logger;
         private readonly IConfiguration _configuration;
-        public AuthorSqlRepository(ILogger<AuthorSqlRepository> logger, IConfiguration configuration)
+        private IBookRepo _bookRepo;
+        public AuthorSqlRepository(ILogger<AuthorSqlRepository> logger, IConfiguration configuration, IBookRepo bookRepo)
         {
             _logger = logger;
             _configuration = configuration;
+            _bookRepo = bookRepo;
         }
         public async Task<IEnumerable<Author?>> GetAllAuthors()
         {
@@ -51,6 +52,24 @@ namespace OnlineBookstore.DL.Repositories.MsSQL
                 throw;
             }
 
+        }
+
+        public async Task<bool> GetByIdBool(int authorId)
+        {
+            try
+            {
+                await using (var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+                {
+                    await conn.OpenAsync();
+                    await conn.QueryFirstOrDefaultAsync<Author>("SELECT * FROM Authors WITH (NOLOCK) WHERE [Id] = @Id", new { Id = authorId });
+                }
+                return true;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($" {e.Message}");
+                throw;
+            }
         }
 
         public async Task<Author?> GetAuthorByName(string name)
@@ -116,8 +135,15 @@ namespace OnlineBookstore.DL.Repositories.MsSQL
                 {
                     await conn.OpenAsync();
                     var result = await GetById(authorId);
+
+                    if (await _bookRepo.GetByAuthorId(authorId))
+                    {
+                        return null;
+                    }
                     (await conn.QueryAsync<Author>($"DELETE FROM Authors  WHERE Id=@Id",
                         new { Id = authorId })).SingleOrDefault();
+
+                    await conn.QueryAsync("DELETE FROM Books WHERE AuthorId=@AuthorId", new { AuthorId = authorId });
                     return result;
                 }
             }
@@ -130,7 +156,26 @@ namespace OnlineBookstore.DL.Repositories.MsSQL
 
         public async Task<bool> AddMultipleAuthors(IEnumerable<Author> authorCollection)
         {
-            return true;
+            try
+            {
+                await using (var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+                {
+                    await conn.OpenAsync();
+                    var query = "INSERT INTO Authors (Name,Age,DateOfBirth,NickName) VALUES(@Name,@Age,@DateOfBirth,@NickName)";
+
+                    foreach (var item in authorCollection)
+                    {
+                        await conn.ExecuteAsync(query, item);
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Erro from {nameof(AddMultipleAuthors)} message: {e.Message}");
+                throw;
+            }
         }
     }
 }

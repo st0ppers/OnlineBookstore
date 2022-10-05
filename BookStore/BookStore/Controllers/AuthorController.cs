@@ -58,18 +58,7 @@ namespace BookStore.Controllers
         [HttpPost(nameof(Add))]
         public async Task<IActionResult> Add([FromBody] AddAuthorRequest authorRequest)
         {
-            //if (authorRequest == null)
-            //{
-            //    return BadRequest(authorRequest);
-            //}
-
-            //var authorExist = _authorServices.GetAuthorByName(authorRequest.Name);
-            //if (authorExist != null) return BadRequest("Author exists!");
-
-            //return Ok(_authorServices.AddAuthor(new Author()));
-
-            //change AddAuthor in services / repo param to AddAuthorRequest
-
+           
             var res = await _authorServices.AddAuthor(authorRequest);
 
             if (res.HttpStatusCode == HttpStatusCode.BadRequest)

@@ -53,6 +53,24 @@ namespace OnlineBookstore.DL.Repositories.MsSQL
             }
         }
 
+        public async Task<bool> GetByAuthorId(int authorId)
+        {
+            try
+            {
+                await using (var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+                {
+                    await conn.OpenAsync();
+                    await conn.QueryFirstOrDefaultAsync<Book>("SELECT * FROM Books WITH (NOLOCK) WHERE Id=@Id", new { Id = authorId });
+                }
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Error from{nameof(GetById)} with error message: {e.Message}");
+                throw;
+            }
+        }
         public async Task<Book> GetByTitle(string tilte)
         {
             try
@@ -77,9 +95,13 @@ namespace OnlineBookstore.DL.Repositories.MsSQL
                 await using (var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
                 {
                     await conn.OpenAsync();
-                    return (await conn.QueryAsync<Book>(
-                        "INSERT INTO Books (AuthorId,Title,LastUpdated,Quantity,Price) " +
-                        "VALUES(@AuthorId,@Title,@LastUpdated,@Quantity,@Price)", book)).SingleOrDefault();
+                    if (await GetByAuthorId(book.AuthorId))
+                    {
+                        return (await conn.QueryAsync<Book>(
+                            "INSERT INTO Books (AuthorId,Title,LastUpdated,Quantity,Price) " +
+                            "VALUES(@AuthorId,@Title,@LastUpdated,@Quantity,@Price)", book)).SingleOrDefault();
+                    }
+                    return null;
                 }
             }
             catch (Exception e)
@@ -97,7 +119,7 @@ namespace OnlineBookstore.DL.Repositories.MsSQL
                 {
                     await conn.OpenAsync();
 
-                    var resut =await conn.QueryAsync(
+                    var resut = await conn.QueryAsync(
                         "UPDATE Books SET AuthorId=@AuthorId,Title=@Title,LastUpdated=@LastUpdated,Quantity=@Quantity,Price=@Price WHERE Id=@Id"
                         , book);
 
@@ -113,7 +135,22 @@ namespace OnlineBookstore.DL.Repositories.MsSQL
 
         public async Task<Book> DeleteBook(int bookId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                await using (var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+                {
+                    await conn.OpenAsync();
+
+                    var result = await conn.QueryAsync($"DELETE FROM Books WHERE Id=@Id", new { Id = bookId });
+
+                    return result.SingleOrDefault();
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Error from {nameof(DeleteBook)} wiht message: {e.Message}");
+                throw;
+            }
         }
     }
 }
