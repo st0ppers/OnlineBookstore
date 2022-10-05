@@ -5,12 +5,12 @@ namespace OnlineBookstore.DL.Interface
     public interface IAuthorRepo
     {
         private static List<Author> _authors;
-        public IEnumerable<Author?> GetAllAuthors();
-        public Author? GetById(int id);
-        public Author? GetAuthorByName(string name);
-        public Author? AddAuthor(Author? author);
-        public Author? UpdateAuthor(Author? author);
-        public Author DeleteAuthor(int authorId);
-        public bool AddMultipleAuthors(IEnumerable<Author> authorCollection);
+        public Task<IEnumerable<Author>> GetAllAuthors();
+        public Task<Author?> GetById(int id);
+        public Task<Author?> GetAuthorByName(string name);
+        public Task<Author?> AddAuthor(Author? author);
+        public Task<Author?> UpdateAuthor(Author? author);
+        public Task<Author> DeleteAuthor(int authorId);
+        public Task<bool> AddMultipleAuthors(IEnumerable<Author> authorCollection);
     }
 }

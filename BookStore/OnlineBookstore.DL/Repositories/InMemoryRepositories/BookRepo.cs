@@ -1,9 +1,8 @@
 ﻿using BookStore.Models.Models;
-using OnlineBookstore.DL.Interface;
 
 namespace OnlineBookstore.DL.Repositories.InMemoryRepositories
 {
-    public class BookRepo : IBookRepo
+    public class BookRepo 
     {
         public static List<Book> _books;
 

@@ -20,23 +20,19 @@ namespace BookStore.Controllers
         }
 
         [HttpGet(nameof(GetAll))]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            _logger.LogInformation("Information Test");
-            _logger.LogWarning("Warning Test");
-            _logger.LogError("Error Test");
-            _logger.LogCritical("Critical Test");
-            return Ok(_bookService.GetAllBooks());
+            return Ok(await _bookService.GetAllBooks());
         }
 
         [HttpGet(nameof(GetById))]
-        public IActionResult GetById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
             if (id <= 0)
             {
                 return BadRequest($"Parameter id {id} must be greater than 0");
             }
-            var result = _bookService.GetById(id);
+            var result = await _bookService.GetById(id);
 
             if (result == null)
             {
@@ -47,36 +43,34 @@ namespace BookStore.Controllers
         }
 
         [HttpPost(nameof(AddBook))]
-        public IActionResult AddBook([FromBody] AddBookRequest bookRequest)
+        public async Task<IActionResult> AddBook([FromBody] AddBookRequest bookRequest)
         {
-            var result = _bookService.AddBook(bookRequest);
+            var result = await _bookService.AddBook(bookRequest);
 
             if (result.HttpStatusCode == HttpStatusCode.BadRequest)
             {
                 return BadRequest(result.Message);
             }
-
             return Ok(result);
         }
 
         [HttpPut(nameof(UpdateBook))]
-        public IActionResult UpdateBook([FromBody] AddBookRequest bookRequest)
+        public async Task<IActionResult> UpdateBook([FromBody] AddBookRequest bookRequest)
         {
-            var result = _bookService.GetByTitle(bookRequest.Title);
+            var result = await _bookService.GetById(bookRequest.Id);
 
             if (result.Title == null)
             {
                 return NotFound(result);
             }
-
-            _bookService.UpdateBook(bookRequest);
+            await _bookService.UpdateBook(bookRequest);
             return Ok(result);
         }
 
         [HttpDelete(nameof(DeleteBook))]
-        public IActionResult DeleteBook(int bookId)
+        public async Task<IActionResult> DeleteBook(int bookId)
         {
-            return Ok(_bookService.DeleteBook(bookId));
+            return Ok(await _bookService.DeleteBook(bookId));
         }
     }
 }

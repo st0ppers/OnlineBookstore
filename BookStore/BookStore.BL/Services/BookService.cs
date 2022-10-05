@@ -18,23 +18,23 @@ namespace BookStore.BL.Services
             _mapper = mapper;
         }
 
-        public IEnumerable<Book> GetAllBooks()
+        public async Task<IEnumerable<Book>> GetAllBooks()
         {
-            return _bookRepo.GetAllBooks();
+            return await _bookRepo.GetAllBooks();
         }
 
-        public Book GetById(int id)
+        public async Task<Book> GetById(int id)
         {
-            return _bookRepo.GetById(id);
+            return await _bookRepo.GetById(id);
         }
 
-        public Book GetByTitle(string title)
+        public async Task<Book> GetByTitle(string title)
         {
-            return _bookRepo.GetByTitle(title);
+            return await _bookRepo.GetByTitle(title);
         }
-        public AddBookResponse AddBook(AddBookRequest? bookRequest)
+        public async Task<AddBookResponse> AddBook(AddBookRequest? bookRequest)
         {
-            if (_bookRepo.GetByTitle(bookRequest.Title) != null)
+            if (_bookRepo.GetByTitle(bookRequest.Title) == null)
             {
                 return new AddBookResponse()
                 {
@@ -43,7 +43,7 @@ namespace BookStore.BL.Services
                 };
             }
             var book = _mapper.Map<Book>(bookRequest);
-            var result = _bookRepo.AddBook(book);
+            var result = await _bookRepo.AddBook(book);
             return new AddBookResponse()
             {
                 HttpStatusCode = HttpStatusCode.OK,
@@ -51,9 +51,9 @@ namespace BookStore.BL.Services
             };
         }
 
-        public AddBookResponse UpdateBook(AddBookRequest bookRequest)
+        public async Task<AddBookResponse> UpdateBook(AddBookRequest bookRequest)
         {
-            if (_bookRepo.GetByTitle(bookRequest.Title) != null)
+            if (await _bookRepo.GetByTitle(bookRequest.Title) == null)
             {
                 return new AddBookResponse()
                 {
@@ -62,7 +62,7 @@ namespace BookStore.BL.Services
                 };
             }
             var book = _mapper.Map<Book>(bookRequest);
-            var result = _bookRepo.UpdateBook(book);
+            var result = await _bookRepo.UpdateBook(book);
             return new AddBookResponse()
             {
                 HttpStatusCode = HttpStatusCode.OK,
@@ -70,9 +70,9 @@ namespace BookStore.BL.Services
             };
         }
 
-        public Book DeleteBook(int bookId)
+        public async Task<Book> DeleteBook(int bookId)
         {
-            return _bookRepo.DeleteBook(bookId);
+            return await _bookRepo.DeleteBook(bookId);
         }
     }
 }
