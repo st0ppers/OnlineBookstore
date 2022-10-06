@@ -49,7 +49,7 @@ namespace BookStore.Controllers
 
             if (result.HttpStatusCode == HttpStatusCode.BadRequest)
             {
-                return BadRequest(result.Message);
+                return NotFound(result);
             }
             return Ok(result);
         }
@@ -57,19 +57,29 @@ namespace BookStore.Controllers
         [HttpPut(nameof(UpdateBook))]
         public async Task<IActionResult> UpdateBook([FromBody] AddBookRequest bookRequest)
         {
-            var result = await _bookService.GetById(bookRequest.Id);
+            var result = await _bookService.UpdateBook(bookRequest);
 
-            if (result.Title == null)
+            if (result.HttpStatusCode == HttpStatusCode.BadRequest)
             {
                 return NotFound(result);
             }
-            await _bookService.UpdateBook(bookRequest);
             return Ok(result);
         }
 
         [HttpDelete(nameof(DeleteBook))]
         public async Task<IActionResult> DeleteBook(int bookId)
         {
+
+            if (bookId <= 0)
+            {
+                return BadRequest($"Parameter id {bookId} must be greater than 0");
+            }
+            var result = await _bookService.GetById(bookId);
+
+            if (result == null)
+            {
+                return NotFound(result);
+            }
             return Ok(await _bookService.DeleteBook(bookId));
         }
     }

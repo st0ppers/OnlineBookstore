@@ -11,7 +11,7 @@ namespace BookStore.BL.Interfaces
         public Task<Author?> GetAuthorByName(string name);
         public Task<AddAuthorResponse?> AddAuthor(AddAuthorRequest? authorRequest);
         public Task<AddAuthorResponse?> UpdateAuthor(AddAuthorRequest? authorRequest);
-        public Task<Author> DeleteAuthor(int authorId);
+        public Task<AddAuthorResponse> DeleteAuthor(int id);
         public Task<bool> AddMultipleAuthors(IEnumerable<Author> authorCollection);
     }
 }

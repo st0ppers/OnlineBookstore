@@ -1,6 +1,7 @@
 ﻿using System.Data.SqlClient;
 using BookStore.Models.Models;
 using Dapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using OnlineBookstore.DL.Interface;
@@ -45,11 +46,12 @@ namespace OnlineBookstore.DL.Repositories.MsSQL
                     await conn.OpenAsync();
                     return await conn.QueryFirstOrDefaultAsync<Author>("SELECT * FROM Authors WITH (NOLOCK) WHERE [Id] = @Id", new { Id = id });
                 }
+
             }
             catch (Exception e)
             {
                 _logger.LogError($" {e.Message}");
-                throw;
+                return null;
             }
 
         }
@@ -96,8 +98,9 @@ namespace OnlineBookstore.DL.Repositories.MsSQL
                 await using (var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
                 {
                     await conn.OpenAsync();
-                    return (await conn.QueryAsync<Author>($"INSERT INTO Authors (Name,Age,DateOfBirth,NickName) VALUES(@Name,@Age,@DateOfBirth,@NickName)"
-                        , author)).SingleOrDefault();
+                    return conn.QueryFirstOrDefaultAsync<Author>(
+                        $"INSERT INTO Authors (Name,Age,DateOfBirth,NickName) VALUES(@Name,@Age,@DateOfBirth,@NickName)"
+                        , author).Result;
 
                 }
             }

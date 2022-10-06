@@ -25,16 +25,25 @@ namespace BookStore.Controllers
         {
             return Ok(await _authorServices.GetAllAuthors());
         }
-
         [HttpGet(nameof(GetByID))]
         public async Task<IActionResult?> GetByID(int id)
         {
+            var user = await _authorServices.GetById(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
             return Ok(await _authorServices.GetById(id));
         }
 
         [HttpGet(nameof(GetByNameAuthor))]
-        public IActionResult? GetByNameAuthor(string name)
+        public async Task<IActionResult?> GetByNameAuthor(string name)
         {
+            var auth = await _authorServices.GetAuthorByName(name);
+            if (auth == null)
+            {
+                return BadRequest(auth);
+            }
             return Ok(_authorServices.GetAuthorByName(name));
         }
 
@@ -58,32 +67,34 @@ namespace BookStore.Controllers
         [HttpPost(nameof(Add))]
         public async Task<IActionResult> Add([FromBody] AddAuthorRequest authorRequest)
         {
-           
             var res = await _authorServices.AddAuthor(authorRequest);
-
             if (res.HttpStatusCode == HttpStatusCode.BadRequest)
             {
-                return BadRequest(res);
+                return NotFound(res);
             }
-
             return Ok(res);
         }
         [HttpPut(nameof(Update))]
         public async Task<IActionResult?> Update([FromBody] AddAuthorRequest? authorRequest)
         {
-            var existing = await _authorServices.GetById(authorRequest.Id);
-
-            if (existing.Name == null)
+            var auth = await _authorServices.UpdateAuthor(authorRequest);
+            if (auth.HttpStatusCode == HttpStatusCode.BadRequest)
             {
-                return NotFound(existing);
+                return NotFound(auth);
             }
-            await _authorServices.UpdateAuthor(authorRequest);
-            return Ok(existing);
+            return Ok(auth);
         }
         [HttpDelete(nameof(Delete))]
-        public async Task<IActionResult?> Delete([FromBody] int authorId)
+        public async Task<IActionResult?> Delete([FromBody] int id)
         {
-            return Ok(await _authorServices.DeleteAuthor(authorId));
+            var auth = await _authorServices.GetById(id);
+            if (auth == null)
+            {
+                return NotFound(auth);
+            }
+
+            await _authorServices.DeleteAuthor(id);
+            return Ok(auth);
         }
     }
 }

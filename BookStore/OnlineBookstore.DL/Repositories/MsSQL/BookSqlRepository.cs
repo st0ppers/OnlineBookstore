@@ -63,12 +63,12 @@ namespace OnlineBookstore.DL.Repositories.MsSQL
                     await conn.QueryFirstOrDefaultAsync<Book>("SELECT * FROM Books WITH (NOLOCK) WHERE Id=@Id", new { Id = authorId });
                 }
 
-                return true;
+                return false;
             }
             catch (Exception e)
             {
                 _logger.LogError($"Error from{nameof(GetById)} with error message: {e.Message}");
-                return false;
+                return true;
             }
         }
         public async Task<Book> GetByTitle(string tilte)
