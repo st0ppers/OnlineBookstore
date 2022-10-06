@@ -1,8 +1,7 @@
 ﻿using System.Net;
-using AutoMapper;
-using BookStore.BL.Interfaces;
-using BookStore.Models.Models;
+using BookStore.Models.MediatR.Commands.AuthorCommands;
 using BookStore.Models.Requests;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookStore.Controllers
@@ -12,62 +11,61 @@ namespace BookStore.Controllers
     [Route("[controller]")]
     public class AuthorController : ControllerBase
     {
-        private static IAuthorService _authorServices;
-        private readonly IMapper _mapper;
-        public AuthorController(IAuthorService authorServices, IMapper mapper)
+        private readonly IMediator _mediator;
+
+        public AuthorController(IMediator mediator)
         {
-            _authorServices = authorServices;
-            _mapper = mapper;
+            _mediator = mediator;
         }
 
         [HttpGet(nameof(Get))]
         public async Task<IActionResult> Get()
         {
-            return Ok(await _authorServices.GetAllAuthors());
+            return Ok(await _mediator.Send(new GetAllAuthorsCommand()));
         }
         [HttpGet(nameof(GetByID))]
         public async Task<IActionResult?> GetByID(int id)
         {
-            var user = await _authorServices.GetById(id);
+            var user = await _mediator.Send(new GetAuthorByIdCommand(id));
             if (user == null)
             {
                 return NotFound();
             }
-            return Ok(await _authorServices.GetById(id));
+            return Ok(user);
         }
 
         [HttpGet(nameof(GetByNameAuthor))]
         public async Task<IActionResult?> GetByNameAuthor(string name)
         {
-            var auth = await _authorServices.GetAuthorByName(name);
+            var auth = await _mediator.Send(new GetAuhtorByNameCommand(name));
             if (auth == null)
             {
                 return BadRequest(auth);
             }
-            return Ok(_authorServices.GetAuthorByName(name));
+            return Ok(auth);
         }
 
-        [HttpPost(nameof(AddAuthorRange))]
-        public async Task<IActionResult> AddAuthorRange([FromBody] AddMultipleAuthorsRequest addMultipleAuthorsRequest)
-        {
-            if (addMultipleAuthorsRequest != null && !addMultipleAuthorsRequest.Authors.Any())
-            {
-                return BadRequest(addMultipleAuthorsRequest);
-            }
+        //[HttpPost(nameof(AddAuthorRange))]
+        //public async Task<IActionResult> AddAuthorRange([FromBody] AddMultipleAuthorsRequest addMultipleAuthorsRequest)
+        //{
+        //    if (addMultipleAuthorsRequest != null && !addMultipleAuthorsRequest.Authors.Any())
+        //    {
+        //        return BadRequest(addMultipleAuthorsRequest);
+        //    }
 
-            var authorCollection = _mapper.Map<IEnumerable<Author>>(addMultipleAuthorsRequest.Authors);
+        //    var authorCollection = _mapper.Map<IEnumerable<Author>>(addMultipleAuthorsRequest.Authors);
 
-            var result = await _authorServices.AddMultipleAuthors(authorCollection);
+        //    var result = await _authorServices.AddMultipleAuthors(authorCollection);
 
-            if (!result) return BadRequest(result);
+        //    if (!result) return BadRequest(result);
 
-            return Ok(result);
-        }
+        //    return Ok(result);
+        //}
 
         [HttpPost(nameof(Add))]
         public async Task<IActionResult> Add([FromBody] AddAuthorRequest authorRequest)
         {
-            var res = await _authorServices.AddAuthor(authorRequest);
+            var res = await _mediator.Send(new AddAuthorCommand(authorRequest));
             if (res.HttpStatusCode == HttpStatusCode.BadRequest)
             {
                 return NotFound(res);
@@ -77,7 +75,7 @@ namespace BookStore.Controllers
         [HttpPut(nameof(Update))]
         public async Task<IActionResult?> Update([FromBody] AddAuthorRequest? authorRequest)
         {
-            var auth = await _authorServices.UpdateAuthor(authorRequest);
+            var auth = await _mediator.Send(new AuthorUpdateCommand(authorRequest));
             if (auth.HttpStatusCode == HttpStatusCode.BadRequest)
             {
                 return NotFound(auth);
@@ -87,13 +85,11 @@ namespace BookStore.Controllers
         [HttpDelete(nameof(Delete))]
         public async Task<IActionResult?> Delete([FromBody] int id)
         {
-            var auth = await _authorServices.GetById(id);
+            var auth = await _mediator.Send(new AuthorDeleteCommand(id));
             if (auth == null)
             {
                 return NotFound(auth);
             }
-
-            await _authorServices.DeleteAuthor(id);
             return Ok(auth);
         }
     }
