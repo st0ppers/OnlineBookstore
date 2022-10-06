@@ -149,6 +149,10 @@ namespace BookStore.Test
                     Quantity = bookRequest.Quantity,
                 })).ReturnsAsync(() => _books.FirstOrDefault(x => x.Id == bookId));
 
+            _bookRepositoryMock.Setup(x => x.GetByTitle(bookRequest.Title)).ReturnsAsync(
+                _books.FirstOrDefault(x => x.Id == bookId));
+
+
             //inject 
             var service = new BookService(_bookRepositoryMock.Object, _mapper);
             var controller = new BookController(service, _logger.Object);
@@ -180,8 +184,10 @@ namespace BookStore.Test
                 Quantity = 1,
             };
 
-            _bookRepositoryMock.Setup(x => x.GetById(bookRequest.Id)).ReturnsAsync(
+            _bookRepositoryMock.Setup(x => x.GetById(bookRequest.Id))!.ReturnsAsync(
                 _books.FirstOrDefault(x => x.Id == bookRequest.Id));
+            _bookRepositoryMock.Setup(x => x.GetByTitle(bookRequest.Title))!.ReturnsAsync(
+                _books.FirstOrDefault(x => x.Title == bookRequest.Title));
 
             _bookRepositoryMock.Setup(x => x.AddBook(It.IsAny<Book>()))
                 .Callback(() => _books.Add(new Book()
