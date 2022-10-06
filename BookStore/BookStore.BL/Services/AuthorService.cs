@@ -10,12 +10,12 @@ using OnlineBookstore.DL.Interface;
 
 namespace BookStore.BL.Services
 {
-    public class AuthorServices : IAuthorService
+    public class AuthorService : IAuthorService
     {
         private readonly IMapper _mapper;
         public readonly IAuthorRepo _authorRepo;
-        private readonly ILogger<AuthorServices> _logger;
-        public AuthorServices(IAuthorRepo authorRepo, IMapper mapper, ILogger<AuthorServices> logger)
+        private readonly ILogger<AuthorService> _logger;
+        public AuthorService(IAuthorRepo authorRepo, IMapper mapper, ILogger<AuthorService> logger)
         {
             _authorRepo = authorRepo;
             _mapper = mapper;
@@ -33,6 +33,7 @@ namespace BookStore.BL.Services
 
         public async Task<Author?> GetAuthorByName(string name)
         {
+            
             return await _authorRepo.GetAuthorByName(name); 
         }
 
@@ -58,7 +59,7 @@ namespace BookStore.BL.Services
 
         public async Task<AddAuthorResponse?> UpdateAuthor(AddAuthorRequest? authorRequest)
         {
-            if (await _authorRepo.GetAuthorByName(authorRequest.Name) != null)
+            if (await _authorRepo.GetAuthorByName(authorRequest.Name) == null)
             {
                 return new AddAuthorResponse()
                 {
@@ -75,9 +76,22 @@ namespace BookStore.BL.Services
             };
         }
 
-        public async Task<Author?> DeleteAuthor(int authorId)
+        public async Task<AddAuthorResponse?> DeleteAuthor(int id)
         {
-            return await _authorRepo.DeleteAuthor(authorId);
+            if (await _authorRepo.GetById(id) == null)
+            {
+                return new AddAuthorResponse()
+                {
+                    HttpStatusCode = HttpStatusCode.BadRequest,
+                    Message = "Bad request"
+                };
+            }
+            var result = await _authorRepo.DeleteAuthor(id);
+            return new AddAuthorResponse()
+            {
+                HttpStatusCode = HttpStatusCode.OK,
+                Auhtor = result
+            };
         }
 
         public async Task<bool> AddMultipleAuthors(IEnumerable<Author> authorCollection)

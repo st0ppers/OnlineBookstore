@@ -49,7 +49,7 @@ namespace BookStore.Controllers
 
             if (result.HttpStatusCode == HttpStatusCode.BadRequest)
             {
-                return BadRequest(result.Message);
+                return NotFound(result);
             }
             return Ok(result);
         }
@@ -57,13 +57,12 @@ namespace BookStore.Controllers
         [HttpPut(nameof(UpdateBook))]
         public async Task<IActionResult> UpdateBook([FromBody] AddBookRequest bookRequest)
         {
-            var result = await _bookService.GetById(bookRequest.Id);
+            var result = await _bookService.UpdateBook(bookRequest);
 
-            if (result.Title == null)
+            if (result.HttpStatusCode == HttpStatusCode.BadRequest)
             {
                 return NotFound(result);
             }
-            await _bookService.UpdateBook(bookRequest);
             return Ok(result);
         }
 
