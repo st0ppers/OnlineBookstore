@@ -69,6 +69,17 @@ namespace BookStore.Controllers
         [HttpDelete(nameof(DeleteBook))]
         public async Task<IActionResult> DeleteBook(int bookId)
         {
+
+            if (bookId <= 0)
+            {
+                return BadRequest($"Parameter id {bookId} must be greater than 0");
+            }
+            var result = await _bookService.GetById(bookId);
+
+            if (result == null)
+            {
+                return NotFound(result);
+            }
             return Ok(await _bookService.DeleteBook(bookId));
         }
     }

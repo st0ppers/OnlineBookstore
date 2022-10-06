@@ -235,7 +235,7 @@ namespace BookStore.Test
                 }).ReturnsAsync(() => _books.FirstOrDefault(x => x.Id == bookId));
 
             _bookRepositoryMock.Setup(x => x.GetById(bookId)).ReturnsAsync(
-                _books.FirstOrDefault(x => x.Id==bookId));
+                _books.FirstOrDefault(x => x.Id == bookId));
             _bookRepositoryMock.Setup(x => x.GetByTitle(bookRequest.Title)).ReturnsAsync(
                 _books.FirstOrDefault(x => x.Id == bookId));
 
@@ -254,109 +254,117 @@ namespace BookStore.Test
             Assert.NotNull(resutlValue);
             Assert.Equal(resutlValue.Book.Price, bookRequest.Price);
         }
-        //[Fact]
-        //public async Task Author_update_Bad()
-        //{
-        //    //setup
-        //    var auhtorId = 1;
-        //    var authorRequest = new AddAuthorRequest()
-        //    {
-        //        Age = 20,
-        //        DateOfBirth = DateTime.Now,
-        //        Name = "asdfasdf",
-        //        NickName = "Gopeto"
-        //    };
 
-        //    _bookRepositoryMock.Setup(x => x.UpdateAuthor(It.IsAny<Author>()))
-        //        .Callback(() =>
-        //        {
-        //            var author = _books.FirstOrDefault(x => x.Id == auhtorId);
-        //            author.Age = authorRequest.Age;
+        [Fact]
+        public async Task Book_update_Bad()
+        {
+            //setup
+            var bookId = 5;
+            var bookRequest = new AddBookRequest()
+            {
+                Id = bookId,
+                Title = "Title",
+                AuthorId = 13,
+                LastUpdated = DateTime.Now,
+                Price = 100,
+                Quantity = 1,
 
-        //        }).ReturnsAsync(() => _books.FirstOrDefault(x => x.Id == auhtorId));
+            };
 
-        //    _bookRepositoryMock.Setup(x => x.GetAuthorByName(authorRequest.Name)).ReturnsAsync(
-        //        _books.FirstOrDefault(x => x.Name == authorRequest.Name));
+            _bookRepositoryMock.Setup(x => x.UpdateBook(It.IsAny<Book>()))
+                .Callback(() =>
+                {
+                    var author = _books.FirstOrDefault(x => x.Id == bookId);
+                    author.Price = bookRequest.Price;
+
+                }).ReturnsAsync(() => _books.FirstOrDefault(x => x.Id == bookId));
+
+            _bookRepositoryMock.Setup(x => x.GetById(bookRequest.Id)).ReturnsAsync(
+                _books.FirstOrDefault(x => x.Id == bookId));
+
+            _bookRepositoryMock.Setup(x => x.GetByTitle(bookRequest.Title)).ReturnsAsync(
+                _books.FirstOrDefault(x => x.Id == bookId));
 
 
+            var service = new BookService(_bookRepositoryMock.Object, _mapper);
+            var controller = new BookController(service, _logger.Object);
 
-        //    var service = new BookServices(_bookRepositoryMock.Object, _mapper, _logger.Object);
-        //    var controller = new AuthorController(service, _mapper);
+            //act
+            var result = await controller.UpdateBook(bookRequest);
 
-        //    //act
-        //    var result = await controller.Update(authorRequest);
+            //asert
+            var notFoundObjectResult = result as NotFoundObjectResult;
+            Assert.NotNull(notFoundObjectResult);
 
-        //    //asert
-        //    var notFoundObjectResult = result as NotFoundObjectResult;
-        //    Assert.NotNull(notFoundObjectResult);
+            var resutlValue = notFoundObjectResult.Value as AddBookResponse;
+            Assert.NotNull(resutlValue);
+            Assert.Equal(2, _books.Count);
+        }
 
-        //    var resutlValue = notFoundObjectResult.Value as AddAuthorResponse;
-        //    Assert.NotNull(resutlValue);
-        //    Assert.Equal(2, _books.Count);
-        //}
-        //[Fact]
-        //public async Task Author_Delete_Ok()
-        //{
-        //    //setup
-        //    var authorId = 1;
-        //    var expectedToDelete = _books.FirstOrDefault(x => x.Id == authorId);
+        [Fact]
+        public async Task Book_Delete_Ok()
+        {
+            //setup
+            var bookId = 1;
+            var expectedToDelete = _books.FirstOrDefault(x => x.Id == bookId);
 
-        //    _bookRepositoryMock.Setup(x => x.GetById(authorId))
-        //        .ReturnsAsync(_books.FirstOrDefault(x => x.Id == authorId));
+            _bookRepositoryMock.Setup(x => x.GetById(bookId))
+                .ReturnsAsync(_books.FirstOrDefault(x => x.Id == bookId));
 
-        //    _bookRepositoryMock.Setup(x => x.DeleteAuthor(authorId))
-        //        .Callback(() =>
-        //        {
-        //            _books.RemoveAt(expectedToDelete.Id);
+            _bookRepositoryMock.Setup(x => x.DeleteBook(bookId))
+                .Callback(() =>
+                {
+                    _books.RemoveAt(expectedToDelete.Id);
 
-        //        })!.ReturnsAsync(() => _books.FirstOrDefault(x => x.Id == authorId));
+                })!.ReturnsAsync(() => _books.FirstOrDefault(x => x.Id == bookId));
 
-        //    //inject
-        //    var service = new BookServices(_bookRepositoryMock.Object, _mapper, _logger.Object);
-        //    var controller = new AuthorController(service, _mapper);
+            //inject
+            var service = new BookService(_bookRepositoryMock.Object, _mapper);
+            var controller = new BookController(service, _logger.Object);
 
-        //    //act
-        //    var result = await controller.Delete(authorId);
+            //act
+            var result = await controller.DeleteBook(bookId);
 
-        //    //asert
-        //    var okObjectResult = result as OkObjectResult;
-        //    Assert.NotNull(okObjectResult);
+            //asert
+            var okObjectResult = result as OkObjectResult;
+            Assert.NotNull(okObjectResult);
 
-        //    var resultValue = okObjectResult.Value as Author;
-        //    Assert.NotNull(resultValue);
-        //    Assert.Equal(1, _books.Count);
-        //}
-        //[Fact]
-        //public async Task Author_Delete_Bad()
-        //{
-        //    //setup
-        //    var authorId = 4;
-        //    var expectedToDelete = _books.FirstOrDefault(x => x.Id == authorId);
+            var resultValue = okObjectResult.Value as Book;
+            Assert.NotNull(resultValue);
+            Assert.Equal(1, _books.Count);
+        }
 
-        //    _bookRepositoryMock.Setup(x => x.GetById(authorId))
-        //        .ReturnsAsync(_books.FirstOrDefault(x => x.Id == authorId));
+        [Fact]
+        public async Task Book_Delete_Bad()
+        {
+            //setup
+            var bookId = 4;
+            var expectedToDelete = _books.FirstOrDefault(x => x.Id == bookId);
 
-        //    _bookRepositoryMock.Setup(x => x.DeleteAuthor(authorId))
-        //        .Callback(() =>
-        //        {
-        //            _books.RemoveAt(authorId - 1);
-        //        })!
-        //        .ReturnsAsync(() => _books.FirstOrDefault(x => x.Id == authorId));
+            _bookRepositoryMock.Setup(x => x.GetById(bookId))
+                .ReturnsAsync(_books.FirstOrDefault(x => x.Id == bookId));
 
-        //    //inject
-        //    var service = new BookServices(_bookRepositoryMock.Object, _mapper, _logger.Object);
-        //    var controller = new AuthorController(service, _mapper);
+            _bookRepositoryMock.Setup(x => x.DeleteBook(bookId))
+                .Callback(() =>
+                {
+                    _books.RemoveAt(bookId - 1);
+                })!
+                .ReturnsAsync(() => _books.FirstOrDefault(x => x.Id == bookId));
 
-        //    //act
-        //    var result = await controller.Delete(authorId);
+            //inject
+            var service = new BookService(_bookRepositoryMock.Object, _mapper);
+            var controller = new BookController(service, _logger.Object);
 
-        //    //asert
-        //    var notFoundResult = result as NotFoundObjectResult;
-        //    Assert.NotNull(notFoundResult);
+            //act
+            var result = await controller.DeleteBook(bookId);
 
-        //    var resultValue = notFoundResult.Value as AddAuthorResponse;
-        //    Assert.Null(resultValue);
-        //}
+            //asert
+            var notFoundResult = result as NotFoundObjectResult;
+            Assert.NotNull(notFoundResult);
+
+            var resultValue = notFoundResult.Value as AddBookResponse;
+            Assert.Null(resultValue);
+        }
 
     }
 }
