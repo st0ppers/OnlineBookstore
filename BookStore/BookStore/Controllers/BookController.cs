@@ -1,5 +1,5 @@
 ﻿using System.Net;
-using BookStore.BL.Interfaces;
+using BookStore.Midlewear;
 using BookStore.Models.MediatR.Commands;
 using BookStore.Models.Requests;
 using MediatR;
@@ -22,6 +22,7 @@ namespace BookStore.Controllers
         [HttpGet(nameof(GetAll))]
         public async Task<IActionResult> GetAll()
         {
+            throw new CustomException($"This error is from {nameof(GetAll)} ");
             return Ok(await _mediator.Send(new GetAllBooksCommand()));
         }
 

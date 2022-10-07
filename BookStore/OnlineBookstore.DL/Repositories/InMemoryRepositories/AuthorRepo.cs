@@ -1,6 +1,5 @@
 ﻿using BookStore.Models.Models;
 using Microsoft.Extensions.Logging;
-using OnlineBookstore.DL.Interface;
 
 namespace OnlineBookstore.DL.Repositories.InMemoryRepositories
 {

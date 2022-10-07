@@ -1,7 +1,6 @@
 ﻿using System.Data.SqlClient;
 using BookStore.Models.Models;
 using Dapper;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using OnlineBookstore.DL.Interface;

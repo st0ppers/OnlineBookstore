@@ -15,14 +15,16 @@ namespace BookStore.Extensions
             services.AddSingleton<IPersonRepo, PersonRepo>();
             services.AddSingleton<IAuthorRepo, AuthorSqlRepository>();
             services.AddSingleton<IBookRepo, BookSqlRepository>();
+            services.AddSingleton<IUserInfoRepository, UserInfoSqlRepository>();
+            services.AddSingleton<IEmployeeRepository, EmployeeSqlRepository>();
             return services;
         }
 
         public static IServiceCollection RegisterServices(this IServiceCollection service)
         {
-            //service.AddSingleton<IAuthorService, AuthorService>();
+            service.AddSingleton<IUserInfoService, UserInfoService>();
+            service.AddSingleton<IEmployeeService, EmployeeService>();
             service.AddSingleton<IPersonService, PersonService>();
-            //service.AddSingleton<IBookService, BookService>();
             return service;
         }
 
