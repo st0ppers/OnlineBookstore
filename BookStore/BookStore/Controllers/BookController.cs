@@ -1,6 +1,8 @@
 ﻿using System.Net;
 using BookStore.BL.Interfaces;
+using BookStore.Models.MediatR.Commands;
 using BookStore.Models.Requests;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookStore.Controllers
@@ -10,19 +12,17 @@ namespace BookStore.Controllers
     [Route("[controller]")]
     public class BookController : ControllerBase
     {
-        private static IBookService _bookService;
-        private readonly ILogger<BookController> _logger;
+        private readonly IMediator _mediator;
 
-        public BookController(IBookService bookService, ILogger<BookController> logger)
+        public BookController(IMediator mediator)
         {
-            _bookService = bookService;
-            _logger = logger;
+            _mediator = mediator;
         }
 
         [HttpGet(nameof(GetAll))]
         public async Task<IActionResult> GetAll()
         {
-            return Ok(await _bookService.GetAllBooks());
+            return Ok(await _mediator.Send(new GetAllBooksCommand()));
         }
 
         [HttpGet(nameof(GetById))]
@@ -32,7 +32,8 @@ namespace BookStore.Controllers
             {
                 return BadRequest($"Parameter id {id} must be greater than 0");
             }
-            var result = await _bookService.GetById(id);
+
+            var result = await _mediator.Send(new GetByIdBookCommand(id));
 
             if (result == null)
             {
@@ -45,19 +46,20 @@ namespace BookStore.Controllers
         [HttpPost(nameof(AddBook))]
         public async Task<IActionResult> AddBook([FromBody] AddBookRequest bookRequest)
         {
-            var result = await _bookService.AddBook(bookRequest);
+            var result = await _mediator.Send(new AddBookCommand(bookRequest));
 
             if (result.HttpStatusCode == HttpStatusCode.BadRequest)
             {
                 return NotFound(result);
             }
-            return Ok(result);
+
+            return Ok(result.Book);
         }
 
         [HttpPut(nameof(UpdateBook))]
         public async Task<IActionResult> UpdateBook([FromBody] AddBookRequest bookRequest)
         {
-            var result = await _bookService.UpdateBook(bookRequest);
+            var result = await _mediator.Send(new UpdateBookCommand(bookRequest));
 
             if (result.HttpStatusCode == HttpStatusCode.BadRequest)
             {
@@ -69,18 +71,16 @@ namespace BookStore.Controllers
         [HttpDelete(nameof(DeleteBook))]
         public async Task<IActionResult> DeleteBook(int bookId)
         {
-
+            var result = await _mediator.Send(new DeleteBookCommand(bookId));
             if (bookId <= 0)
             {
                 return BadRequest($"Parameter id {bookId} must be greater than 0");
             }
-            var result = await _bookService.GetById(bookId);
-
             if (result == null)
             {
                 return NotFound(result);
             }
-            return Ok(await _bookService.DeleteBook(bookId));
+            return Ok(result);
         }
     }
 }

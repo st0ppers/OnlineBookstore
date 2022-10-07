@@ -8,7 +8,7 @@ using OnlineBookstore.DL.Interface;
 
 namespace BookStore.BL.Services
 {
-    public class BookService : IBookService
+    public class BookService
     {
         private readonly IBookRepo _bookRepo;
         private readonly IMapper _mapper;
@@ -18,61 +18,62 @@ namespace BookStore.BL.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<Book>> GetAllBooks()
-        {
-            return await _bookRepo.GetAllBooks();
-        }
+        //public async Task<IEnumerable<Book>> GetAllBooks()
+        //{
+        //    return await _bookRepo.GetAllBooks();
+        //}
 
-        public async Task<Book> GetById(int id)
-        {
-            return await _bookRepo.GetById(id);
-        }
+        //public async Task<Book> GetById(int id)
+        //{
+        //    return await _bookRepo.GetById(id);
+        //}
 
-        public async Task<Book> GetByTitle(string title)
-        {
-            return await _bookRepo.GetByTitle(title);
-        }
-        public async Task<AddBookResponse> AddBook(AddBookRequest? bookRequest)
-        {
-            if (await _bookRepo.GetByTitle(bookRequest.Title) != null)
-            {
-                return new AddBookResponse()
-                {
-                    HttpStatusCode = HttpStatusCode.BadRequest,
-                    Message = "Bad Request"
-                };
-            }
-            var book = _mapper.Map<Book>(bookRequest);
-            var result = await _bookRepo.AddBook(book);
-            return new AddBookResponse()
-            {
-                HttpStatusCode = HttpStatusCode.OK,
-                Book = result
-            };
-        }
+        //public async Task<Book> GetByTitle(string title)
+        //{
+        //    return await _bookRepo.GetByTitle(title);
+        //}
 
-        public async Task<AddBookResponse> UpdateBook(AddBookRequest bookRequest)
-        {
-            if (await _bookRepo.GetByTitle(bookRequest.Title) == null)
-            {
-                return new AddBookResponse()
-                {
-                    HttpStatusCode = HttpStatusCode.BadRequest,
-                    Message = "Bad Request"
-                };
-            }
-            var book = _mapper.Map<Book>(bookRequest);
-            var result = await _bookRepo.UpdateBook(book);
-            return new AddBookResponse()
-            {
-                HttpStatusCode = HttpStatusCode.OK,
-                Book = result
-            };
-        }
+        //public async Task<AddBookResponse> AddBook(AddBookRequest? bookRequest)
+        //{
+        //    if (await _bookRepo.GetByTitle(bookRequest.Title) != null)
+        //    {
+        //        return new AddBookResponse()
+        //        {
+        //            HttpStatusCode = HttpStatusCode.BadRequest,
+        //            Message = "Bad Request"
+        //        };
+        //    }
+        //    var book = _mapper.Map<Book>(bookRequest);
+        //    var result = await _bookRepo.AddBook(book);
+        //    return new AddBookResponse()
+        //    {
+        //        HttpStatusCode = HttpStatusCode.OK,
+        //        Book = result
+        //    };
+        //}
 
-        public async Task<Book> DeleteBook(int bookId)
-        {
-            return await _bookRepo.DeleteBook(bookId);
-        }
+        //public async Task<AddBookResponse> UpdateBook(AddBookRequest bookRequest)
+        //{
+        //    if (await _bookRepo.GetById(bookRequest.Id) == null)
+        //    {
+        //        return new AddBookResponse()
+        //        {
+        //            HttpStatusCode = HttpStatusCode.BadRequest,
+        //            Message = "Bad Request"
+        //        };
+        //    }
+        //    var book = _mapper.Map<Book>(bookRequest);
+        //    var result = await _bookRepo.UpdateBook(book);
+        //    return new AddBookResponse()
+        //    {
+        //        HttpStatusCode = HttpStatusCode.OK,
+        //        Book = result
+        //    };
+        //}
+
+        //public async Task<Book> DeleteBook(int bookId)
+        //{
+        //    return await _bookRepo.DeleteBook(bookId);
+        //}
     }
 }
