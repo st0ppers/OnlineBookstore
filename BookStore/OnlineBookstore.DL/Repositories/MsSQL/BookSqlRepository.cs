@@ -95,13 +95,9 @@ namespace OnlineBookstore.DL.Repositories.MsSQL
                 await using (var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
                 {
                     await conn.OpenAsync();
-                    if (await GetByAuthorId(book.AuthorId))
-                    {
-                        return (await conn.QueryAsync<Book>(
-                            "INSERT INTO Books (AuthorId,Title,LastUpdated,Quantity,Price) " +
-                            "VALUES(@AuthorId,@Title,@LastUpdated,@Quantity,@Price)", book)).SingleOrDefault();
-                    }
-                    return null;
+                    var result = await conn.ExecuteAsync(
+                        "INSERT INTO Books (AuthorId,Title,LastUpdated,Quantity,Price) VALUES(@AuthorId,@Title,@LastUpdated,@Quantity,@Price)", book);
+                    return book;
                 }
             }
             catch (Exception e)
@@ -119,11 +115,11 @@ namespace OnlineBookstore.DL.Repositories.MsSQL
                 {
                     await conn.OpenAsync();
 
-                    var resut = await conn.QueryAsync(
+                    var resut = await conn.ExecuteAsync(
                         "UPDATE Books SET AuthorId=@AuthorId,Title=@Title,LastUpdated=@LastUpdated,Quantity=@Quantity,Price=@Price WHERE Id=@Id"
                         , book);
 
-                    return resut.SingleOrDefault();
+                    return book;
                 }
             }
             catch (Exception e)

@@ -4,7 +4,6 @@ using BookStore.Models.MediatR.Commands.AuthorCommands;
 using BookStore.Models.Models;
 using BookStore.Models.Responses;
 using MediatR;
-using Microsoft.AspNetCore.Server.HttpSys;
 using OnlineBookstore.DL.Interface;
 
 namespace BookStore.BL.CommandsHandler.AuthorCommandHandler
@@ -21,7 +20,8 @@ namespace BookStore.BL.CommandsHandler.AuthorCommandHandler
 
         public async Task<AddAuthorResponse> Handle(AuthorUpdateCommand request, CancellationToken cancellationToken)
         {
-            if (await _authorRepo.GetAuthorByName(request.Request.Name) == null)
+            var a = await _authorRepo.GetById(request.Request.Id);
+            if ( a.Name== null)
             {
                 return new AddAuthorResponse()
                 {

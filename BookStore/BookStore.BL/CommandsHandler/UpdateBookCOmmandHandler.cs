@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using AutoMapper;
-using BookStore.BL.Interfaces;
 using BookStore.Models.MediatR.Commands;
 using BookStore.Models.Models;
 using BookStore.Models.Responses;
@@ -23,7 +22,7 @@ namespace BookStore.BL.CommandsHandler
         public async Task<AddBookResponse> Handle(UpdateBookCommand request, CancellationToken cancellationToken)
         {
 
-            if (await _bookRepo.GetById(request.bookRequest.Id) == null)
+            if (await _bookRepo.GetByTitle(request.bookRequest.Title) == null)
             {
                 return new AddBookResponse()
                 {

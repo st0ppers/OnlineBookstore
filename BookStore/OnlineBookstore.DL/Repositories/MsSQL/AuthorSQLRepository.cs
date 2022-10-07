@@ -118,9 +118,10 @@ namespace OnlineBookstore.DL.Repositories.MsSQL
                 await using (var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
                 {
                     await conn.OpenAsync();
-                    return (await conn.QueryAsync($"UPDATE Authors SET Name=@Name,Age=@Age,DateOfBirth=@DateOfBirth,NickName=@NickName WHERE Id=@Id"
+                    await conn.ExecuteAsync($"UPDATE Authors SET Name=@Name,Age=@Age,DateOfBirth=@DateOfBirth,NickName=@NickName WHERE Id=@Id"
                         ,
-                        author)).SingleOrDefault();
+                        author);
+                    return author;
                 }
             }
             catch (Exception e)

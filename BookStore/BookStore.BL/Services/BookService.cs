@@ -8,7 +8,7 @@ using OnlineBookstore.DL.Interface;
 
 namespace BookStore.BL.Services
 {
-    public class BookService //: IBookService
+    public class BookService
     {
         private readonly IBookRepo _bookRepo;
         private readonly IMapper _mapper;

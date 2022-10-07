@@ -30,7 +30,7 @@ namespace BookStore.BL.CommandsHandler
                         Message = "Bad Request"
                     };
                 }
-                var bookMapper = _mapper.Map<Book>(book);
+                var bookMapper = _mapper.Map<Book>(book.book);
                 var result = await _bookRepo.AddBook(bookMapper);
                 return new AddBookResponse()
                 {

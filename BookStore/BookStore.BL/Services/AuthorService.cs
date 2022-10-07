@@ -10,7 +10,7 @@ using OnlineBookstore.DL.Interface;
 
 namespace BookStore.BL.Services
 {
-    public class AuthorService // : IAuthorService
+    public class AuthorService
     {
         private readonly IMapper _mapper;
         public readonly IAuthorRepo _authorRepo;

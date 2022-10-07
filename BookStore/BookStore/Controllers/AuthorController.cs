@@ -33,7 +33,6 @@ namespace BookStore.Controllers
             }
             return Ok(user);
         }
-
         [HttpGet(nameof(GetByNameAuthor))]
         public async Task<IActionResult?> GetByNameAuthor(string name)
         {
@@ -44,24 +43,6 @@ namespace BookStore.Controllers
             }
             return Ok(auth);
         }
-
-        //[HttpPost(nameof(AddAuthorRange))]
-        //public async Task<IActionResult> AddAuthorRange([FromBody] AddMultipleAuthorsRequest addMultipleAuthorsRequest)
-        //{
-        //    if (addMultipleAuthorsRequest != null && !addMultipleAuthorsRequest.Authors.Any())
-        //    {
-        //        return BadRequest(addMultipleAuthorsRequest);
-        //    }
-
-        //    var authorCollection = _mapper.Map<IEnumerable<Author>>(addMultipleAuthorsRequest.Authors);
-
-        //    var result = await _authorServices.AddMultipleAuthors(authorCollection);
-
-        //    if (!result) return BadRequest(result);
-
-        //    return Ok(result);
-        //}
-
         [HttpPost(nameof(Add))]
         public async Task<IActionResult> Add([FromBody] AddAuthorRequest authorRequest)
         {
@@ -73,7 +54,7 @@ namespace BookStore.Controllers
             return Ok(res);
         }
         [HttpPut(nameof(Update))]
-        public async Task<IActionResult?> Update([FromBody] AddAuthorRequest? authorRequest)
+        public async Task<IActionResult?> Update([FromBody] UpdateAuthorRequest? authorRequest)
         {
             var auth = await _mediator.Send(new AuthorUpdateCommand(authorRequest));
             if (auth.HttpStatusCode == HttpStatusCode.BadRequest)

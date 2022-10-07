@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BookStore.Models.MediatR.Commands.AuthorCommands
 {
-    public record AuthorUpdateCommand(AddAuthorRequest Request) : IRequest<AddAuthorResponse>
+    public record AuthorUpdateCommand(UpdateAuthorRequest Request) : IRequest<AddAuthorResponse>
     {
     }
 }
