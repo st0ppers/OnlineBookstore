@@ -32,7 +32,7 @@ namespace BookStore.Controllers
             {
                 var user = await _identityService.CheckUserAndPassword(loginRequest.UserNmae, loginRequest.Passowrd);
 
-                
+
                 if (user != null)
                 {
                     var userRoles = await _identityService.GetAllRoles(user);
@@ -50,7 +50,7 @@ namespace BookStore.Controllers
 
                     foreach (var role in userRoles)
                     {
-                     claims.Add(new Claim(ClaimTypes.Role,role));
+                        claims.Add(new Claim(ClaimTypes.Role, role));
                     }
 
                     var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
