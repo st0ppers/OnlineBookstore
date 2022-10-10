@@ -1,5 +1,7 @@
 ﻿using BookStore.BL.Interfaces;
 using BookStore.BL.Services;
+using BookStore.Models.Models.User;
+using Microsoft.AspNetCore.Identity;
 using OnlineBookstore.DL.Interface;
 using OnlineBookstore.DL.Repositories.InMemoryRepositories;
 using OnlineBookstore.DL.Repositories.MsSQL;
@@ -15,14 +17,17 @@ namespace BookStore.Extensions
             services.AddSingleton<IPersonRepo, PersonRepo>();
             services.AddSingleton<IAuthorRepo, AuthorSqlRepository>();
             services.AddSingleton<IBookRepo, BookSqlRepository>();
+            services.AddSingleton<IUserInfoRepository, UserInfoSqlRepository>();
+            services.AddSingleton<IEmployeeRepository, EmployeeSqlRepository>();
             return services;
         }
 
         public static IServiceCollection RegisterServices(this IServiceCollection service)
         {
-            //service.AddSingleton<IAuthorService, AuthorService>();
+            service.AddSingleton<IUserInfoService, UserInfoService>();
+            service.AddSingleton<IEmployeeService, EmployeeService>();
             service.AddSingleton<IPersonService, PersonService>();
-            //service.AddSingleton<IBookService, BookService>();
+            service.AddTransient<IIdentityService, IdentityService>();
             return service;
         }
 
