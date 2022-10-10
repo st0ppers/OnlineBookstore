@@ -137,9 +137,9 @@ namespace OnlineBookstore.DL.Repositories.MsSQL
                 {
                     await conn.OpenAsync();
 
-                    var result = await conn.QueryAsync($"DELETE FROM Books WHERE Id=@Id", new { Id = bookId });
+                    var result = await conn.QueryFirstOrDefaultAsync<Book>($"DELETE FROM Books WHERE Id=@Id", new { Id = bookId });
 
-                    return result.SingleOrDefault();
+                    return result;
                 }
             }
             catch (Exception e)

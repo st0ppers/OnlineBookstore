@@ -3,6 +3,7 @@ using BookStore.Midlewear;
 using BookStore.Models.MediatR.Commands;
 using BookStore.Models.Requests;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookStore.Controllers
@@ -18,14 +19,14 @@ namespace BookStore.Controllers
         {
             _mediator = mediator;
         }
-
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         [HttpGet(nameof(GetAll))]
         public async Task<IActionResult> GetAll()
         {
-            throw new CustomException($"This error is from {nameof(GetAll)} ");
             return Ok(await _mediator.Send(new GetAllBooksCommand()));
         }
 
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
         [HttpGet(nameof(GetById))]
         public async Task<IActionResult> GetById(int id)
         {
@@ -68,7 +69,7 @@ namespace BookStore.Controllers
             }
             return Ok(result);
         }
-
+        [Authorize(AuthenticationSchemes = "Bearer", Policy = "Admin")]
         [HttpDelete(nameof(DeleteBook))]
         public async Task<IActionResult> DeleteBook(int bookId)
         {
@@ -77,11 +78,7 @@ namespace BookStore.Controllers
             {
                 return BadRequest($"Parameter id {bookId} must be greater than 0");
             }
-            if (result == null)
-            {
-                return NotFound(result);
-            }
-            return Ok(result);
+            return Ok(result.Id);
         }
     }
 }

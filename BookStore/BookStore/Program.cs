@@ -3,12 +3,15 @@ using BookStore.BL.CommandsHandler;
 using BookStore.Extensions;
 using BookStore.HealthChecks;
 using BookStore.Midlewear;
+using BookStore.Models.Models.User;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using OnlineBookstore.DL.Repositories.InMemoryRepositories;
+using OnlineBookstore.DL.Repositories.MsSQL;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
 
@@ -54,6 +57,20 @@ builder.Services.AddSwaggerGen(x =>
     });
 });
 
+
+builder.Services.AddAuthorization(option =>
+{
+    option.AddPolicy("View", policy =>
+    {
+        policy.RequireClaim("View");
+    });
+    option.AddPolicy("Admin", policy =>
+    {
+        policy.RequireClaim("Admin");
+    });
+});
+
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
     options.RequireHttpsMetadata = false;
@@ -75,6 +92,9 @@ builder.Services.AddHealthChecks()
     .AddUrlGroup(new Uri("https://google.bg"), name: "Google Service");
 
 builder.Services.AddMediatR(typeof(GetAllBooksCommandHandler).Assembly);
+
+builder.Services.AddIdentity<UserInfo, UserRole>().AddUserStore<UserInfoStore>().AddRoleStore<UserRoleStore>();
+;
 
 var app = builder.Build();
 
