@@ -1,4 +1,5 @@
 using System.Text;
+using BookStore.BL.Background;
 using BookStore.BL.CommandsHandler;
 using BookStore.Extensions;
 using BookStore.HealthChecks;
@@ -94,7 +95,8 @@ builder.Services.AddHealthChecks()
 builder.Services.AddMediatR(typeof(GetAllBooksCommandHandler).Assembly);
 
 builder.Services.AddIdentity<UserInfo, UserRole>().AddUserStore<UserInfoStore>().AddRoleStore<UserRoleStore>();
-;
+
+builder.Services.AddHostedService<MyBackgroundService>();
 
 var app = builder.Build();
 
