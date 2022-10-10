@@ -65,7 +65,6 @@ namespace OnlineBookstore.DL.Repositories.MsSQL
                         , user);
 
 
-                    //return result > 0 ? IdentityResult.Success : IdentityResult.Failed(result);
                     return await Task.FromResult(IdentityResult.Success);
                 }
             }
