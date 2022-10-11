@@ -1,7 +1,4 @@
-﻿using System.ComponentModel;
-using System.Timers;
-using Microsoft.AspNetCore.Server.Kestrel.Core.Features;
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Timer = System.Threading.Timer;
 
