@@ -45,7 +45,6 @@ namespace BookStore.Controllers
                         new Claim("DisplayName", user.DisplayName ?? string.Empty),
                         new Claim("Username", user.UserName ?? string.Empty),
                         new Claim("Email", user.Email ?? string.Empty),
-                        //new Claim("Admin","Admin")
                     };
 
                     foreach (var role in userRoles)
