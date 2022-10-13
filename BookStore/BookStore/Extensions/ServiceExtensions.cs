@@ -1,7 +1,8 @@
 ﻿using BookStore.BL.Interfaces;
+using BookStore.BL.Kafka;
+using BookStore.BL.Kafka.KafkaSettings;
 using BookStore.BL.Services;
-using BookStore.Models.Models.User;
-using Microsoft.AspNetCore.Identity;
+using BookStore.Models.Models;
 using OnlineBookstore.DL.Interface;
 using OnlineBookstore.DL.Repositories.InMemoryRepositories;
 using OnlineBookstore.DL.Repositories.MsSQL;
@@ -28,6 +29,9 @@ namespace BookStore.Extensions
             service.AddSingleton<IEmployeeService, EmployeeService>();
             service.AddSingleton<IPersonService, PersonService>();
             service.AddTransient<IIdentityService, IdentityService>();
+            service.AddSingleton<ConsumerService<int, int>>();
+            service.AddSingleton<ProducerServices<int, int>>();
+            service.AddSingleton<KafkaSettings>();
             return service;
         }
 

@@ -1,9 +1,13 @@
 using System.Text;
 using BookStore.BL.Background;
 using BookStore.BL.CommandsHandler;
+using BookStore.BL.Kafka;
+using BookStore.BL.Kafka.KafkaSettings;
 using BookStore.Extensions;
 using BookStore.HealthChecks;
 using BookStore.Midlewear;
+using BookStore.Models.Configuration;
+using BookStore.Models.Models;
 using BookStore.Models.Models.User;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -58,6 +62,8 @@ builder.Services.AddSwaggerGen(x =>
     });
 });
 
+builder.Services.Configure<MyJsonSettings>(builder.Configuration.GetSection(nameof(MyJsonSettings)));
+builder.Services.Configure<KafkaSettings>(builder.Configuration.GetSection(nameof(KafkaSettings)));
 
 builder.Services.AddAuthorization(option =>
 {
@@ -97,6 +103,7 @@ builder.Services.AddMediatR(typeof(GetAllBooksCommandHandler).Assembly);
 builder.Services.AddIdentity<UserInfo, UserRole>().AddUserStore<UserInfoStore>().AddRoleStore<UserRoleStore>();
 
 builder.Services.AddHostedService<MyBackgroundService>();
+builder.Services.AddHostedService<ConsumerService<int,int>>();
 
 var app = builder.Build();
 
