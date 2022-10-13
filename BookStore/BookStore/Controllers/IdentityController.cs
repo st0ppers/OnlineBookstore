@@ -2,10 +2,12 @@
 using System.Security.Claims;
 using System.Text;
 using BookStore.BL.Interfaces;
+using BookStore.Models.Configuration;
 using BookStore.Models.Models.User;
 using BookStore.Models.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
@@ -17,10 +19,12 @@ namespace BookStore.Controllers
     {
         private readonly IConfiguration _config;
         private readonly IIdentityService _identityService;
-        public IdentityController(IConfiguration config, IIdentityService identityService)
+        private readonly IOptionsMonitor<MyJsonSettings> _jsonSettings;
+        public IdentityController(IConfiguration config, IIdentityService identityService, IOptionsMonitor<MyJsonSettings> jsonSettings)
         {
             _config = config;
             _identityService = identityService;
+            _jsonSettings = jsonSettings;
         }
 
 

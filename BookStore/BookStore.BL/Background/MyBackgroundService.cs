@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using BookStore.BL.Kafka;
+using Microsoft.AspNetCore.Mvc.TagHelpers.Cache;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Timer = System.Threading.Timer;
 
@@ -12,13 +14,14 @@ namespace BookStore.BL.Background
         public MyBackgroundService(ILogger<MyBackgroundService> logger)
         {
             _logger = logger;
+
             _timer = new Timer(DoWork, null, 0, 2000);
         }
 
         private void DoWork(object? state)
         {
             Thread.Sleep(2000);
-            _logger.LogInformation($"Hello from {nameof(MyBackgroundService)} {DateTime.Now}");
+            //_logger.LogInformation($"Hello from {nameof(MyBackgroundService)} {DateTime.Now}");
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
