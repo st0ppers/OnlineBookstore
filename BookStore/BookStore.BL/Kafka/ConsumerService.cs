@@ -1,39 +1,40 @@
-﻿using BookStore.BL.Kafka.KafkaSettings;
-using BookStore.BL.Serializers;
+﻿using BookStore.BL.Serializers;
+using BookStore.Cache;
 using Confluent.Kafka;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
 namespace BookStore.BL.Kafka
 {
-    public class ConsumerService<TKey, TValue> : IHostedService, IDisposable
+    public class ConsumerService<TKey, TValue> : IHostedService where TValue : ICacheModel<TKey>
     {
-        private readonly IOptionsMonitor<KafkaSettings.KafkaSettings> _kafkaSettings;
-        private ConsumerConfig _config;
-        private IConsumer<TKey, TValue> consumer;
-        public ConsumerService(IOptionsMonitor<KafkaSettings.KafkaSettings> kafkaSettings)
+        private readonly IConsumer<TKey, TValue> _consumer;
+        public KafkaCache<TKey, TValue> _kafkaCache;
+        public ConsumerService(IOptionsMonitor<KafkaSettings.KafkaSettings> kafkaSettings, KafkaCache<TKey, TValue> result)
         {
-            _kafkaSettings = kafkaSettings;
-            _config = new ConsumerConfig()
+            var kafkaSettings1 = kafkaSettings;
+            _kafkaCache = result;
+            var config = new ConsumerConfig()
             {
-                BootstrapServers = _kafkaSettings.CurrentValue.BootstrapServers,
+                BootstrapServers = kafkaSettings1.CurrentValue.BootstrapServers,
                 AutoOffsetReset = AutoOffsetReset.Earliest,
-                GroupId = "MyGroupID",
+                GroupId = kafkaSettings1.CurrentValue.GroupId,
             };
-            consumer = new ConsumerBuilder<TKey, TValue>(_config).SetKeyDeserializer(new MsgPackDeserializer<TKey>())
-                .SetValueDeserializer(new MsgPackDeserializer<TValue>()).Build();
 
-            consumer.Subscribe("test2");
+            _consumer = new ConsumerBuilder<TKey, TValue>(config).SetKeyDeserializer(new MsgPackDeserializer<TKey>())
+                .SetValueDeserializer(new MsgPackDeserializer<TValue>()).Build();
+            _consumer.Subscribe(kafkaSettings1.CurrentValue.Topic);
         }
+
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            Console.WriteLine("It is starting -------------------------");
             Task.Run(() =>
             {
                 while (!cancellationToken.IsCancellationRequested)
                 {
-                    var result = consumer.Consume();
-                    Console.WriteLine($"Recieved Key: {result.Message.Key} Value: {result.Message.Value}");
+                    var item = _consumer.Consume();
+                    _kafkaCache.cache.Add(item.Message.Key, item.Message.Value);
+                    Console.WriteLine($"consumed key:{item.Message.Key}");
                 }
             }, cancellationToken);
             return Task.CompletedTask;
@@ -42,11 +43,6 @@ namespace BookStore.BL.Kafka
         public Task StopAsync(CancellationToken cancellationToken)
         {
             return Task.CompletedTask;
-        }
-
-        public void Dispose()
-        {
-            consumer.Dispose();
         }
     }
 }

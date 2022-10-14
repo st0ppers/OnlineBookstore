@@ -1,6 +1,7 @@
 ﻿using System.Net;
-using BookStore.Midlewear;
+using BookStore.BL.Kafka;
 using BookStore.Models.MediatR.Commands;
+using BookStore.Models.Models;
 using BookStore.Models.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -14,16 +15,19 @@ namespace BookStore.Controllers
     public class BookController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private  ConsumerService<int, Book> _kafkaConsumer;
 
-        public BookController(IMediator mediator)
+        public BookController(IMediator mediator, ConsumerService<int, Book> kafkaConsumer)
         {
             _mediator = mediator;
+            _kafkaConsumer = kafkaConsumer;
         }
         [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         [HttpGet(nameof(GetAll))]
         public async Task<IActionResult> GetAll()
         {
-            return Ok(await _mediator.Send(new GetAllBooksCommand()));
+            var a = _kafkaConsumer._kafkaCache.cache;
+            return Ok(a);
         }
 
         [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]

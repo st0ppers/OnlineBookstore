@@ -1,13 +1,10 @@
 using System.Text;
-using BookStore.BL.Background;
 using BookStore.BL.CommandsHandler;
-using BookStore.BL.Kafka;
 using BookStore.BL.Kafka.KafkaSettings;
 using BookStore.Extensions;
 using BookStore.HealthChecks;
 using BookStore.Midlewear;
 using BookStore.Models.Configuration;
-using BookStore.Models.Models;
 using BookStore.Models.Models.User;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -29,7 +26,7 @@ builder.Logging.AddSerilog(logger);
 // Add services to the container.
 // addSingleton make instance of the object one time and it used everywhere
 
-builder.Services.RegisterRepositories().RegisterServices()
+builder.Services.RegisterRepositories().RegisterServices().RegisterHostedServices()
     .AddAutoMapper(typeof(Program));
 
 builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
@@ -102,8 +99,7 @@ builder.Services.AddMediatR(typeof(GetAllBooksCommandHandler).Assembly);
 
 builder.Services.AddIdentity<UserInfo, UserRole>().AddUserStore<UserInfoStore>().AddRoleStore<UserRoleStore>();
 
-builder.Services.AddHostedService<MyBackgroundService>();
-builder.Services.AddHostedService<ConsumerService<int,int>>();
+
 
 var app = builder.Build();
 
