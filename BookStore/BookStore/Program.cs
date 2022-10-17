@@ -12,6 +12,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using OnlineBookstore.DL;
 using OnlineBookstore.DL.Repositories.InMemoryRepositories;
 using OnlineBookstore.DL.Repositories.MsSQL;
 using Serilog;
@@ -61,6 +62,7 @@ builder.Services.AddSwaggerGen(x =>
 
 builder.Services.Configure<MyJsonSettings>(builder.Configuration.GetSection(nameof(MyJsonSettings)));
 builder.Services.Configure<KafkaSettings>(builder.Configuration.GetSection(nameof(KafkaSettings)));
+builder.Services.Configure<MongoDbConfiguration>(builder.Configuration.GetSection(nameof(MongoDbConfiguration)));
 
 builder.Services.AddAuthorization(option =>
 {
