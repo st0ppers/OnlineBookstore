@@ -22,15 +22,15 @@ namespace BookStore.Controllers
         }
 
         [HttpPost(nameof(AddToCart))]
-        public async Task<IActionResult> AddToCart(int userId, Book book)
+        public async Task<IActionResult> AddToCart(ShoppingCart cart)
         {
-            return Ok(await _cartService.AddToCard(userId, book));
+            return Ok(await _cartService.AddToCard(cart));
         }
 
         [HttpDelete(nameof(RemoveFromCart))]
-        public async Task<IActionResult> RemoveFromCart(int userId, Book book)
+        public async Task<IActionResult> RemoveFromCart(ShoppingCart cart)
         {
-            return Ok(await _cartService.RemoveFromCart(userId, book));
+            return Ok(await _cartService.RemoveFromCart(cart));
         }
 
         [HttpPost(nameof(EmptyCart))]
@@ -40,9 +40,9 @@ namespace BookStore.Controllers
         }
 
         [HttpPost(nameof(FinishedPurchase))]
-        public Task<IActionResult> FinishedPurchase(Purchase purchase)
+        public async Task<IActionResult> FinishedPurchase(Purchase purchase)
         {
-            return Task.FromResult<IActionResult>(Ok(_cartService.FinishPurchase(purchase)));
+            return Ok( _cartService.FinishPurchase(purchase));
         }
     }
 }

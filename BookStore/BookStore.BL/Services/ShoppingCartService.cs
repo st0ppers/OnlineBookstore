@@ -17,14 +17,14 @@ namespace BookStore.BL.Services
             return await _cartRepository.GetContent(userId);
         }
 
-        public async Task<ShoppingCart> AddToCard(int userId, Book book)
+        public async Task<ShoppingCart> AddToCard(ShoppingCart cart)
         {
-            return await _cartRepository.AddToCard(userId, book);
+            return await _cartRepository.AddToCard(cart);
         }
 
-        public async Task<ShoppingCart> RemoveFromCart(int userId,Book book)
+        public async Task<ShoppingCart> RemoveFromCart(ShoppingCart cart)
         {
-            return await _cartRepository.RemoveFromCart(userId,book);
+            return await _cartRepository.RemoveFromCart(cart);
         }
 
         public async Task EmptyCart(int userId)

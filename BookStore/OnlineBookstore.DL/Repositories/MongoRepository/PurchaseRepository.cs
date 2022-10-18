@@ -26,10 +26,6 @@ namespace OnlineBookstore.DL.Repositories.MongoRepository
 
         public async Task<Guid> DeletePurchase(Purchase purchase)
         {
-            //await _cartRepository.RemoveFromCart(userId);
-            //var purcchase = await _collection.FindAsync(x => x.UserId == userId);
-            //purcchase.ToList();
-            //return purcchase.FirstOrDefault().Id;
             var delete = await _collection.DeleteOneAsync(x => x.Id == purchase.Id);
             return purchase.Id;
         }

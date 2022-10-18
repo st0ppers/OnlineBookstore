@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using OnlineBookstore.DL.Interface;
-using static Dapper.SqlMapper;
 
 namespace OnlineBookstore.DL.Repositories.MongoRepository
 {
@@ -28,25 +27,24 @@ namespace OnlineBookstore.DL.Repositories.MongoRepository
             return shoppingCart.ToList();
         }
 
-        public async Task<ShoppingCart> AddToCard(int userId, Book book)
+        public async Task<ShoppingCart> AddToCard(ShoppingCart cart)
         {
-            var shoppingCart = await _collection.FindAsync(x => x.UserId == userId);
-            //a.Books.Add(book);
+            var shoppingCart = await _collection.FindAsync(x => x.UserId == cart.UserId);
             if (shoppingCart == null)
             {
                 return null;
             }
-            shoppingCart.Current.GetEnumerator().Current.Books.Append(book);
-            return shoppingCart.Current.GetEnumerator().Current;
+            //shoppingCart.ToList().RemoveAll(x => x.Id == cart.Id);
+            await _collection.DeleteOneAsync(x => x.UserId == cart.UserId);
+            await _collection.InsertOneAsync(cart);
+            return cart;
         }
 
-        public async Task<ShoppingCart> RemoveFromCart(int userId, Book book)
+        public async Task<ShoppingCart> RemoveFromCart(ShoppingCart cart)
         {
-            var shoppingCart = await _collection.FindAsync(x => x.UserId == userId);
-            foreach (var i in shoppingCart.ToList())
-            {
-                _collection.DeleteOneAsync(i => i.Books.GetEnumerator().Current == book);
-            }
+            var shoppingCart = await _collection.FindAsync(x => x.UserId == cart.UserId);
+            await _collection.DeleteOneAsync(x => x.UserId == cart.UserId);
+            await _collection.InsertOneAsync(cart);
             return shoppingCart.Current.GetEnumerator().Current;
         }
 
@@ -58,7 +56,6 @@ namespace OnlineBookstore.DL.Repositories.MongoRepository
 
         public async Task FinishPurchase(Purchase purchase)
         {
-            await EmptyCart(purchase.UserId);
             await _purchaseRepository.SavePurchase(purchase);
         }
     }
