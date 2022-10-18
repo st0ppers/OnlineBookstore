@@ -34,7 +34,6 @@ namespace OnlineBookstore.DL.Repositories.MongoRepository
             {
                 return null;
             }
-            //shoppingCart.ToList().RemoveAll(x => x.Id == cart.Id);
             await _collection.DeleteOneAsync(x => x.UserId == cart.UserId);
             await _collection.InsertOneAsync(cart);
             return cart;
