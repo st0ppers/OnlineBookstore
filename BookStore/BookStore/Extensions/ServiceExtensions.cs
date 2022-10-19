@@ -5,8 +5,10 @@ using BookStore.BL.Kafka.KafkaSettings;
 using BookStore.BL.Services;
 using BookStore.Cache;
 using BookStore.Models.Models;
+using OnlineBookstore.DL;
 using OnlineBookstore.DL.Interface;
 using OnlineBookstore.DL.Repositories.InMemoryRepositories;
+using OnlineBookstore.DL.Repositories.MongoRepository;
 using OnlineBookstore.DL.Repositories.MsSQL;
 
 namespace BookStore.Extensions
@@ -22,6 +24,8 @@ namespace BookStore.Extensions
             services.AddSingleton<IBookRepo, BookSqlRepository>();
             services.AddSingleton<IUserInfoRepository, UserInfoSqlRepository>();
             services.AddSingleton<IEmployeeRepository, EmployeeSqlRepository>();
+            services.AddSingleton<IShoppingCartRepository, ShoppingCartRepository>();
+            services.AddSingleton<IPurchaseRepository, PurchaseRepository>();
             return services;
         }
 
@@ -35,6 +39,8 @@ namespace BookStore.Extensions
             service.AddSingleton<ProducerServices<int, Book>>();
             service.AddSingleton<KafkaSettings>();
             service.AddSingleton<KafkaCache<int, Book>>();
+            service.AddSingleton<IShoppingCartService, ShoppingCartService>();
+            service.AddSingleton<IPurchaseService, PurchaseService>();
             return service;
         }
 
