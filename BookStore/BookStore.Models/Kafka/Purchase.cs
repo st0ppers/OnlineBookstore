@@ -1,14 +1,11 @@
-﻿using MessagePack;
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
+﻿using BookStore.Models.Models;
+using MessagePack;
 
-namespace BookStore.Models.Models
+namespace BookStore.Models.Kafka
 {
     [MessagePackObject()]
-    public record Purchase
+    public class PurchaseKafka
     {
-        [BsonId]
-        [BsonRepresentation(BsonType.String)]
         [Key(0)]
         public Guid Id { get; init; }
         [Key(1)]

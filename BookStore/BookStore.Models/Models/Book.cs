@@ -10,7 +10,7 @@ namespace BookStore.Models.Models
         [Key(1)]
         public int AuthorId { get; init; }
         [Key(2)]
-        public string Title { get; init; }
+        public string Title { get; set; }
         [Key(3)]
         public DateTime LastUpdated { get; set; }
         [Key(4)]

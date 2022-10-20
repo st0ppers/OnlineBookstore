@@ -15,18 +15,17 @@ namespace BookStore.Controllers
     public class BookController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private  ConsumerService<int, Book> _kafkaConsumer;
 
-        public BookController(IMediator mediator, ConsumerService<int, Book> kafkaConsumer)
+        public BookController(IMediator mediator)
         {
             _mediator = mediator;
-            _kafkaConsumer = kafkaConsumer;
         }
         [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         [HttpGet(nameof(GetAll))]
         public async Task<IActionResult> GetAll()
         {
-            var a = _kafkaConsumer._kafkaCache.cache;
+            var a = await _mediator.Send(new GetAllBooksCommand());
+            //var a = _kafkaConsumer._kafkaCache.cache;
             return Ok(a);
         }
 

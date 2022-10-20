@@ -1,6 +1,4 @@
-﻿using BookStore.BL.Kafka;
-using Microsoft.AspNetCore.Mvc.TagHelpers.Cache;
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Timer = System.Threading.Timer;
 
