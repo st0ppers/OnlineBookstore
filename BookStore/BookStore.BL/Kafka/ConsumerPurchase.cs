@@ -50,16 +50,9 @@ namespace BookStore.BL.Kafka
                         await bookRepo.AddBook(book);
                     }
 
-                    foreach (var pair in additinalAuthorInfo)
-                    {
-                        var a = books.FirstOrDefault(x => item.AuthorId == pair.Key);
-                        if (a == null)
-                        {
-                            continue;
-                        }
-                        purchase.AdditionalInfo.Append(pair.Value);
-                    }
-
+                    var s = additinalAuthorInfo.Distinct().FirstOrDefault(x => book.AuthorId == x.Key);
+                    purchase.AdditionalInfo.Append(s.Value);
+                    
                     book.Quantity -= item.Quantity;
                     await bookRepo1.UpdateBook(item);
 
