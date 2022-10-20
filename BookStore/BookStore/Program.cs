@@ -1,5 +1,6 @@
 using System.Text;
 using BookStore.BL.CommandsHandler;
+using BookStore.BL.HttpClient;
 using BookStore.BL.Kafka.KafkaSettings;
 using BookStore.BL.Kafka.Settings;
 using BookStore.Extensions;
@@ -66,6 +67,8 @@ builder.Services.Configure<KafkaSettings>(builder.Configuration.GetSection(nameo
 builder.Services.Configure<KafkaSettingsDelivery>(builder.Configuration.GetSection(nameof(KafkaSettingsDelivery)));
 builder.Services.Configure<KafkaSettingsPurchase>(builder.Configuration.GetSection(nameof(KafkaSettingsPurchase)));
 builder.Services.Configure<MongoDbConfiguration>(builder.Configuration.GetSection(nameof(MongoDbConfiguration)));
+
+builder.Services.Configure<HttpClientSettings>(builder.Configuration.GetSection(nameof(HttpClientSettings)));
 
 builder.Services.AddAuthorization(option =>
 {

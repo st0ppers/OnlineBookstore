@@ -27,5 +27,7 @@ namespace BookStore.BL.Services
         {
             return _purchaseRepository.GetAllPurchaseForUser(userId);
         }
+
+
     }
 }

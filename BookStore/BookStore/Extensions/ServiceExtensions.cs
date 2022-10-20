@@ -1,4 +1,5 @@
 ﻿using BookStore.BL.Background;
+using BookStore.BL.HttpClient;
 using BookStore.BL.Interfaces;
 using BookStore.BL.Kafka;
 using BookStore.BL.Kafka.KafkaSettings;

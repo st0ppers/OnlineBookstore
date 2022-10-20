@@ -1,4 +1,5 @@
-﻿using BookStore.BL.Kafka.Settings;
+﻿using BookStore.BL.HttpClient;
+using BookStore.BL.Kafka.Settings;
 using BookStore.BL.Serializers;
 using BookStore.Cache;
 using Confluent.Kafka;
@@ -14,18 +15,20 @@ namespace BookStore.BL.Kafka
         private readonly IBookRepo _bookRepo;
         private readonly IOptionsMonitor<KafkaSettingsDelivery> _settingsDelivery;
         private readonly IOptionsMonitor<KafkaSettingsPurchase> _settingsPurchase;
-
-        public ConsumerService(IBookRepo bookRepo, IOptionsMonitor<KafkaSettingsDelivery> settingsDelivery, IOptionsMonitor<KafkaSettingsPurchase> settingsPurchase)
+        private readonly IOptionsMonitor<HttpClientSettings> _options;
+        public ConsumerService(IBookRepo bookRepo, IOptionsMonitor<KafkaSettingsDelivery> settingsDelivery,
+            IOptionsMonitor<KafkaSettingsPurchase> settingsPurchase, IOptionsMonitor<HttpClientSettings> options)
         {
             _bookRepo = bookRepo;
             _settingsDelivery = settingsDelivery;
             _settingsPurchase = settingsPurchase;
+            _options = options;
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
             var delivery = new ConsumerDelivery(_settingsDelivery, _bookRepo);
-            var purchase = new ConsumerPurchase(_bookRepo, _settingsPurchase);
+            var purchase = new ConsumerPurchase(_bookRepo, _settingsPurchase, _options);
             Task.Run(() =>
             {
                 while (!cancellationToken.IsCancellationRequested)

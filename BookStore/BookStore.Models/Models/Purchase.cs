@@ -17,5 +17,7 @@ namespace BookStore.Models.Models
         public decimal TotalMoney { get; set; }
         [Key(3)]
         public int UserId { get; set; }
+        [Key(4)] public IEnumerable<string> AdditionalInfo { get; set; } = Enumerable.Empty<string>();
+
     }
 }

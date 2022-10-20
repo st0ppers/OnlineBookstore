@@ -1,9 +1,12 @@
-﻿using System.Threading.Channels;
+﻿using System.Security.Cryptography.X509Certificates;
+using System.Threading.Channels;
 using System.Threading.Tasks.Dataflow;
+using BookStore.BL.HttpClient;
 using BookStore.BL.Kafka.Settings;
 using BookStore.BL.Serializers;
 using BookStore.Models.Models;
 using Confluent.Kafka;
+using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.Extensions.Options;
 using OnlineBookstore.DL.Interface;
 
@@ -14,11 +17,13 @@ namespace BookStore.BL.Kafka
         private readonly IConsumer<Guid, Purchase> _consumer;
         private readonly IOptionsMonitor<KafkaSettingsPurchase> _settings;
         private readonly TransformBlock<Purchase, string> _transformBlock;
+        private readonly IOptionsMonitor<HttpClientSettings> _httpClientSettings;
 
-        public ConsumerPurchase(IBookRepo bookRepo, IOptionsMonitor<KafkaSettingsPurchase> settings)
+        public ConsumerPurchase(IBookRepo bookRepo, IOptionsMonitor<KafkaSettingsPurchase> settings, IOptionsMonitor<HttpClientSettings> httpClientSettings)
         {
             var bookRepo1 = bookRepo;
             _settings = settings;
+            _httpClientSettings = httpClientSettings;
             var config = new ConsumerConfig()
             {
                 BootstrapServers = _settings.CurrentValue.BootstrapServers,
@@ -29,25 +34,36 @@ namespace BookStore.BL.Kafka
             _consumer = new ConsumerBuilder<Guid, Purchase>(config).SetKeyDeserializer(new MsgPackDeserializer<Guid>())
                 .SetValueDeserializer(new MsgPackDeserializer<Purchase>()).Build();
             _consumer.Subscribe(_settings.CurrentValue.Topic);
+            var client = new Client(_httpClientSettings);
 
-
-
-            _transformBlock = new TransformBlock<Purchase, string>(async x =>
+            _transformBlock = new TransformBlock<Purchase, string>(async purchase =>
             {
-                var books = x.Books;
+                var additinalAuthorInfo = await client.GetAdditionalInfo();
 
-                foreach (var book in books)
+                var books = purchase.Books;
+                foreach (var item in books)
                 {
-                    var i = await bookRepo1.GetById(book.Id);
-                    if (i == null)
+                    var book = await bookRepo1.GetById(item.Id);
+                    if (book == null)
                     {
-                        i.Title = $"Book {i.Id} aaa";
-                        await bookRepo.AddBook(i);
+                        book.Title = $"Book {book.Id} aaa";
+                        await bookRepo.AddBook(book);
                     }
-                    i.Quantity -= book.Quantity;
-                    await bookRepo1.UpdateBook(book);
 
-                    return $"Book id {book.Id}";
+                    foreach (var pair in additinalAuthorInfo)
+                    {
+                        var a = books.FirstOrDefault(x => item.AuthorId == pair.Key);
+                        if (a == null)
+                        {
+                            continue;
+                        }
+                        purchase.AdditionalInfo.Append(pair.Value);
+                    }
+
+                    book.Quantity -= item.Quantity;
+                    await bookRepo1.UpdateBook(item);
+
+                    return $"Book id {item.Id}";
                 }
                 return "";
 
