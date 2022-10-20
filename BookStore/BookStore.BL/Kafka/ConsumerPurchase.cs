@@ -66,7 +66,6 @@ namespace BookStore.BL.Kafka
                     try
                     {
                         var a = _consumer.Consume();
-
                         _transformBlock.Post(a.Message.Value);
 
                     }

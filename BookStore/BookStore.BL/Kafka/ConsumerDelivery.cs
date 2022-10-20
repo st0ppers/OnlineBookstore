@@ -55,7 +55,6 @@ namespace BookStore.BL.Kafka
                 while (true)
                 {
                     var a = _consumer.Consume().Message.Value;
-                        //Console.WriteLine($"Book updated {a.Book.Id} with quntity {a.Book.Quantity} from delivery");
                     _transformBlock.Post(a);
                 }
             });
