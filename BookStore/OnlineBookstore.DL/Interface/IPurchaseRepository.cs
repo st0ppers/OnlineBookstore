@@ -9,5 +9,7 @@ namespace OnlineBookstore.DL.Interface
         Task<Guid> DeletePurchase(Purchase purchase);
 
         Task<IEnumerable<Purchase>> GetAllPurchaseForUser(int userId);
+
+
     }
 }

@@ -1,40 +1,40 @@
-﻿using BookStore.BL.Serializers;
+﻿using BookStore.BL.HttpClient;
+using BookStore.BL.Kafka.Settings;
+using BookStore.BL.Serializers;
 using BookStore.Cache;
 using Confluent.Kafka;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using OnlineBookstore.DL.Interface;
 
 namespace BookStore.BL.Kafka
 {
-    public class ConsumerService<TKey, TValue> : IHostedService where TValue : ICacheModel<TKey>
+    public class ConsumerService : IHostedService
     {
-        private readonly IConsumer<TKey, TValue> _consumer;
-        public KafkaCache<TKey, TValue> _kafkaCache;
-        public ConsumerService(IOptionsMonitor<KafkaSettings.KafkaSettings> kafkaSettings, KafkaCache<TKey, TValue> result)
+        private readonly IBookRepo _bookRepo;
+        private readonly IOptionsMonitor<KafkaSettingsDelivery> _settingsDelivery;
+        private readonly IOptionsMonitor<KafkaSettingsPurchase> _settingsPurchase;
+        private readonly IOptionsMonitor<HttpClientSettings> _options;
+        public ConsumerService(IBookRepo bookRepo, IOptionsMonitor<KafkaSettingsDelivery> settingsDelivery,
+            IOptionsMonitor<KafkaSettingsPurchase> settingsPurchase, IOptionsMonitor<HttpClientSettings> options)
         {
-            var kafkaSettings1 = kafkaSettings;
-            _kafkaCache = result;
-            var config = new ConsumerConfig()
-            {
-                BootstrapServers = kafkaSettings1.CurrentValue.BootstrapServers,
-                AutoOffsetReset = AutoOffsetReset.Earliest,
-                GroupId = kafkaSettings1.CurrentValue.GroupId,
-            };
-
-            _consumer = new ConsumerBuilder<TKey, TValue>(config).SetKeyDeserializer(new MsgPackDeserializer<TKey>())
-                .SetValueDeserializer(new MsgPackDeserializer<TValue>()).Build();
-            _consumer.Subscribe(kafkaSettings1.CurrentValue.Topic);
+            _bookRepo = bookRepo;
+            _settingsDelivery = settingsDelivery;
+            _settingsPurchase = settingsPurchase;
+            _options = options;
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
+            var delivery = new ConsumerDelivery(_settingsDelivery, _bookRepo);
+            var purchase = new ConsumerPurchase(_bookRepo, _settingsPurchase, _options);
             Task.Run(() =>
             {
                 while (!cancellationToken.IsCancellationRequested)
                 {
-                    var item = _consumer.Consume();
-                    _kafkaCache.cache.Add(item.Message.Key, item.Message.Value);
-                    Console.WriteLine($"consumed key:{item.Message.Key}");
+                    delivery.MyConsume();
+                    purchase.MyConsume();
                 }
             }, cancellationToken);
             return Task.CompletedTask;
@@ -42,6 +42,7 @@ namespace BookStore.BL.Kafka
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
+            Console.WriteLine("Shutting down");
             return Task.CompletedTask;
         }
     }

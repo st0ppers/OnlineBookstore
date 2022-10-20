@@ -12,6 +12,7 @@ namespace OnlineBookstore.DL.Repositories.MsSQL
         private readonly IConfiguration _configuration;
         private readonly ILogger<BookSqlRepository> _logger;
 
+
         public BookSqlRepository(ILogger<BookSqlRepository> logger, IConfiguration configuration)
         {
             _logger = logger;
