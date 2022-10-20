@@ -38,7 +38,7 @@ namespace BookStore.BL.Kafka
 
             _transformBlock = new TransformBlock<Purchase, string>(async purchase =>
             {
-                var additinalAuthorInfo = await client.GetAdditionalInfo();
+                var additinalAuthorInfo = client.GetAdditionalInfo();
 
                 var books = purchase.Books;
                 foreach (var item in books)
@@ -50,9 +50,14 @@ namespace BookStore.BL.Kafka
                         await bookRepo.AddBook(book);
                     }
 
-                    var s = additinalAuthorInfo.Distinct().FirstOrDefault(x => book.AuthorId == x.Key);
-                    purchase.AdditionalInfo.Append(s.Value);
-                    
+                    foreach (var pair in additinalAuthorInfo.Result)
+                    {
+                        if (pair.Key == book.AuthorId)
+                        {
+                            purchase.AdditionalInfo.Append(pair.Value);
+                        }
+                    }
+
                     book.Quantity -= item.Quantity;
                     await bookRepo1.UpdateBook(item);
 
